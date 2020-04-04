@@ -6,7 +6,7 @@
 using namespace std;
 const int SCREEN_WIDTH = 840;
 const int SCREEN_HEIGHT = 620;
-int k;
+int k,score = 0,diem=0;
 int board_game[31][42];
 void init(int &le_trai,int &le_phai)
 {
@@ -381,7 +381,7 @@ void ve_le(SDL_Renderer *renderer,gach &box)
     rect.y = 0;
     rect.w = (SCREEN_WIDTH-10*box.size)/2 ;
     rect.h = SCREEN_HEIGHT;
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 123, 234, 100, 200);
     SDL_RenderFillRect(renderer, &rect);
 
     SDL_Rect rect2;
@@ -389,14 +389,200 @@ void ve_le(SDL_Renderer *renderer,gach &box)
     rect2.y = 0;
     rect2.w = (SCREEN_WIDTH-10*box.size)/2;
     rect2.h = SCREEN_HEIGHT;
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 123, 234, 100, 200);
     SDL_RenderFillRect(renderer, &rect2);
-}
 
+    SDL_Rect rect3;
+    rect3.x = (SCREEN_WIDTH-10*box.size)/2 ;
+    rect3.y = SCREEN_HEIGHT-box.size;
+    rect3.w = 10*box.size;
+    rect3.h = box.size;
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderFillRect(renderer, &rect3);
+    SDL_Rect rect4[10];
+    for(int i=0; i<10; i++)
+    {
+        rect4[i].x = (SCREEN_WIDTH-10*box.size)/2 + i*box.size;
+        rect4[i].y = SCREEN_HEIGHT-box.size;
+        rect4[i].w = box.size;
+        rect4[i].h = box.size;
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        SDL_RenderDrawRect(renderer, &rect4[i]);
+    }
+
+}
+bool inside(SDL_Renderer *renderer,gach box,point A,point B,point C,point D)
+{
+    xoay(renderer,box,k,A,B,C,D);
+    int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
+    int le_phai = le_trai+9;
+    bool checkA = (A.y <= le_phai && A.y >= le_trai);
+    bool checkB = (B.y <= le_phai && B.y >= le_trai);
+    bool checkC = (C.y <= le_phai && C.y >= le_trai);
+    bool checkD = (D.y <= le_phai && D.y >= le_trai);
+    bool check = (checkA && checkB && checkC && checkD);
+    //cout<<checkA<<","<<checkB<<","<<checkC<<","<<checkD<<endl;
+    return check;
+}
+void co_dinh_gach(point A,point B,point C,point D)
+{
+    board_game[A.x][A.y] = 1;
+    board_game[B.x][B.y] = 1;
+    board_game[C.x][C.y] = 1;
+    board_game[D.x][D.y] = 1;
+}
+void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)
+{
+    for(int i=1; i<30; i++)
+    {
+        for(int j=1; j<41; j++)
+        {
+            if(board_game[i][j] == 1)
+            {
+                SDL_Rect rect;
+                rect.x = j*box.size;
+                rect.y = i*box.size;
+                rect.h = box.size;
+                rect.w = box.size;
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                SDL_RenderDrawRect(renderer, &rect);
+            }
+        }
+    }
+}
+//void lui_dong_cu(SDL_Renderer *renderer,gach &box)
+//{
+//    int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
+//    int le_phai = le_trai+9;
+//    int count1=0,count2=0,count3=0,count4=0;
+//    for(int i=le_trai; i<=le_phai; i++)
+//    {
+//        if(board_game[29][i] == 1)
+//            count1++;
+//        if(board_game[28][i] == 1)
+//            count2++;
+//        if(board_game[27][i] == 1)
+//            count3++;
+//        if(board_game[26][i] == 1)
+//            count4++;
+//    }
+//    cout<<count1<<","<<count2<<","<<count3<<","<<count4<<" ";
+//    if(count4 == 10)
+//    {
+//        for(int i=29; i>= 4; i--)
+//        {
+//            for(int j=le_trai; j<=le_phai; j++)
+//            {
+//                board_game[i][j] = board_game[i-4][j];
+//            }
+//        }
+//        for(int i=0; i<4; i++)
+//        {
+//            for(int j=le_trai; j<=le_phai; j++)
+//            {
+//                board_game[i][j] = 0;
+//            }
+//        }
+//        score+=40;
+//    }
+//    if(count3 == 10 && count4 <10)
+//    {
+//        for(int i=29; i>= 3; i--)
+//        {
+//            for(int j=le_trai; j<=le_phai; j++)
+//            {
+//                board_game[i][j] = board_game[i-3][j];
+//            }
+//        }
+//        for(int i=0; i<3; i++)
+//        {
+//            for(int j=le_trai; j<=le_phai; j++)
+//            {
+//                board_game[i][j] = 0;
+//            }
+//        }
+//        score+=30;
+//    }
+//    if(count2 == 10 && count4 <10 && count3 <10)
+//    {
+//        for(int i=29; i>= 2; i--)
+//        {
+//            for(int j=le_trai; j<=le_phai; j++)
+//            {
+//                board_game[i][j] = board_game[i-2][j];
+//            }
+//        }
+//        for(int i=0; i<2; i++)
+//        {
+//            for(int j=le_trai; j<=le_phai; j++)
+//            {
+//                board_game[i][j] = 0;
+//            }
+//        }
+//        score+=20;
+//    }
+//    if(count1 == 10 && count4 <10 && count3 <10 && count2<10)
+//    {
+//        for(int i=29; i>= 1; i--)
+//        {
+//            for(int j=le_trai; j<=le_phai; j++)
+//            {
+//                board_game[i][j] = board_game[i-1][j];
+//            }
+//        }
+//        for(int i=0; i<1; i++)
+//        {
+//            for(int j=le_trai; j<=le_phai; j++)
+//            {
+//                board_game[i][j] = 0;
+//            }
+//        }
+//        score+=10;
+//    }
+//    cout<<score<<endl;
+//    ve_gach_da_co_dinh(renderer,box);
+//}
+void lui_dong(SDL_Renderer *renderer,gach &box)
+{
+    int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
+    int le_phai = le_trai+9;
+    int count[30];
+    for(int i=0; i<30; i++)
+    {
+        count[i]=0;
+    }
+    for(int i=le_trai; i<=le_phai; i++)
+    {
+        for(int j=0; j<30; j++)
+        {
+            if(board_game[j][i] == 1)
+                count[j]++;
+        }
+    }
+    for(int i = 29; i>=1; i--)
+    {
+        if(count[i]== 10)
+        {
+            for(int j=i; j>= 1; j--)
+            {
+                for(int k=le_trai; k<=le_phai; k++)
+                {
+                    board_game[j][k] = board_game[j-1][k];
+                }
+            }
+            for(int k=le_trai; k<=le_phai; k++)
+            {
+                board_game[0][k] = 0;
+            }
+            diem++;
+        }
+    }
+    score = diem*10;
+    cout<<score<<endl;
+    ve_gach_da_co_dinh(renderer,box);
+}
 int main(int argc, char* argv[])
 {
-
-
     SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
     SDL_Window* window;
     SDL_Renderer* renderer;
@@ -412,20 +598,20 @@ int main(int argc, char* argv[])
     b=20;
 
     box.get_toa_do_Tam(a,b);
+
     int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size-1;
     int le_phai = le_trai+11;
-
     init(le_trai,le_phai);
 
     SDL_Event e;
     int i=0,sig = 0;
     while(true)
     {
-        k=0;
+        k=0;//dung de quay truong hop 7,3,4
         srand(time(0));
 
         int random = rand() % 7 + 1;
-        box.getType(7);
+        box.getType(random);
         box.get_toa_do_Tam(a,b);
         getABCD(box,A,B,C,D);
         while(!quit)
@@ -436,7 +622,11 @@ int main(int argc, char* argv[])
             goDown(box,A,B,C,D,a);
             ve_le(renderer,box);
             box.render(renderer,A,B,C,D);
-            int time_delay = 400;
+
+            lui_dong(renderer,box);
+            ve_gach_da_co_dinh(renderer,box);
+            int time_delay = 200;
+
             SDL_RenderPresent(renderer);
 
             SDL_Delay(time_delay);
@@ -462,17 +652,18 @@ int main(int argc, char* argv[])
                         break;
                     //case SDLK_s: box.turnDown(); break;
                     case SDLK_w:
-                        k++;
-                        if(IsMove(box,A,B,C,D,0))
+
+                        if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D))
                         {
                             xoay(renderer,box,k,A,B,C,D);
                             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
                             SDL_RenderClear(renderer);
                             ve_le(renderer,box);
+                            ve_gach_da_co_dinh(renderer,box);
                             box.render(renderer,A,B,C,D);
                             SDL_RenderPresent(renderer);
-                            SDL_Delay(time_delay/5);
-
+                            SDL_Delay(time_delay/4);
+                            k++;
                         }
                         break;
                     }
@@ -483,9 +674,9 @@ int main(int argc, char* argv[])
             {
                 if(!IsMove(box,A,B,C,D,0))
                 {
+                    co_dinh_gach(A,B,C,D);
                     a=0;
                     b=20;
-                    //cout<<board_game[A.x+1][A.y]<<","<<board_game[B.x+1][B.y]<<", "<<board_game[C.x+1][C.y]<<","<<board_game[D.x+1][D.y]<<endl;
                     break;
                 }
             }
@@ -493,14 +684,13 @@ int main(int argc, char* argv[])
             {
                 if(max(A.x,B.x,C.x,D.x)>=29)
                 {
+                    co_dinh_gach(A,B,C,D);
                     a=0;
                     b=20;
                     break;
                 }
             }
-
         }
-
         i++;
         if(i>100)
             i=2;
