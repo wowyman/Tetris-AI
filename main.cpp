@@ -1,10 +1,10 @@
 #include <iostream>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <cstdlib>
 #include <ctime>
 #include <thread>
 #include <chrono>
-
 #include "gach.h"
 using namespace std;
 const int SCREEN_WIDTH = 840;
@@ -30,6 +30,7 @@ void init(int &le_trai,int &le_phai)
         board_game[34][i] = -1;
     }
 }
+
 void logSDLError(std::ostream& os,const std::string &msg, bool fatal = false);
 
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal)
@@ -41,6 +42,7 @@ void logSDLError(std::ostream& os, const std::string &msg, bool fatal)
         exit(1);
     }
 }
+
 const string WINDOW_TITLE = "An Implementation of Code.org Painter";
 
 void initSDL(SDL_Window* &window, SDL_Renderer* &renderer);
@@ -61,6 +63,7 @@ void initSDL(SDL_Window* &window, SDL_Renderer* &renderer)
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
     SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
+
 void quitSDL(SDL_Window* window, SDL_Renderer* renderer);
 
 void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
@@ -255,7 +258,7 @@ void xoay(SDL_Renderer *renderer,gach& box,int k,point& A,point& B,point& C,poin
     }
     else if(box.type == 6);
 }
-void getABCD(gach &box,point &A,point &B,point &C,point &D)
+void getABCD(gach box,point &A,point &B,point &C,point &D)
 {
 
     if(box.type == 1)
@@ -472,10 +475,10 @@ bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)
     xoay(renderer,box,1,A,B,C,D);
     int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
     int le_phai = le_trai+9;
-    bool checkA = (A.y <= le_phai && A.y >= le_trai);
-    bool checkB = (B.y <= le_phai && B.y >= le_trai);
-    bool checkC = (C.y <= le_phai && C.y >= le_trai);
-    bool checkD = (D.y <= le_phai && D.y >= le_trai);
+    bool checkA = (A.y <= le_phai && A.y >= le_trai && board_game[A.x][A.y] == 0);
+    bool checkB = (B.y <= le_phai && B.y >= le_trai && board_game[B.x][B.y] == 0);
+    bool checkC = (C.y <= le_phai && C.y >= le_trai && board_game[C.x][C.y] == 0);
+    bool checkD = (D.y <= le_phai && D.y >= le_trai && board_game[D.x][D.y] == 0);
     bool check = (checkA && checkB && checkC && checkD);
     //cout<<checkA<<","<<checkB<<","<<checkC<<","<<checkD<<endl;
     return check;
@@ -532,11 +535,11 @@ void lui_dong(SDL_Renderer *renderer,gach &box)
                 count[j]++;
         }
     }
-    for(int i = 29; i>=5;)
+    for(int i = 34; i>=5;)
     {
         if(count[i]== 10)
         {
-            for(int j=i; j>=1; j--)
+            for(int j=i; j>=4; j--)
             {
                 for(int k=le_trai; k<=le_phai; k++)
                 {
@@ -547,7 +550,6 @@ void lui_dong(SDL_Renderer *renderer,gach &box)
                 count[4]=0;
             }
             score+=10;
-            cout<<score<<endl;
         }
         else i--;
     }
@@ -602,35 +604,63 @@ bool end_game(gach &box)
 //        SDL_RenderPresent(renderer);
 //    }
 //}
+void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)
+{
+    SDL_Rect rect;
+    rect.x = 29*box.size;
+    rect.y = 8*box.size;
+    rect.w = 5*box.size;
+    rect.h = 6*box.size;
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderFillRect(renderer,&rect);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLine(renderer,29*box.size,8*box.size,34*box.size,8*box.size);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLine(renderer,34*box.size,8*box.size,34*box.size,14*box.size);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLine(renderer,29*box.size,14*box.size,34*box.size,14*box.size);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLine(renderer,29*box.size,8*box.size,29*box.size,14*box.size);
+    point a,b,c,d;
+    box.get_toa_do_Tam(11,31);
+    box.getType(hinh_truoc);
+    getABCD(box,a,b,c,d);
+    box.render(renderer,a,b,c,d);
+}
 int main(int argc, char* argv[])
 {
     SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
     SDL_Window* window;
     SDL_Renderer* renderer;
-    bool quit = false,end = false;
     initSDL(window, renderer);
-
-    point A,B,C,D;
-
+    bool quit = false,end = false;
     gach box;
+    point A,B,C,D;
     int a,b;//toa do tam
-
     a=2;
     b=20;
-
     box.get_toa_do_Tam(a,b);
-
+    //ttf
+    TTF_Init();
+    TTF_Font * font = TTF_OpenFont("arial.ttf", 10);
+    SDL_Surface * surface ;
+     SDL_Texture * texture ;
+    //end
+    srand(time(0));
+    int hinh_truoc = rand() % 7 + 1,hinh_sau;
     int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size-1;
     int le_phai = le_trai+11;
     init(le_trai,le_phai);
-
+    gach box1;
     SDL_Event e;
     while(!end)
     {
         k=0;//dung de quay truong hop 7,3,4
+        hinh_sau = hinh_truoc;
+        box.getType(hinh_sau);
         srand(time(0));
-        int random = rand() % 7 + 1;
-        box.getType(random);
+        hinh_truoc = rand() % 7 + 1;
+
         box.get_toa_do_Tam(a,b);
         getABCD(box,A,B,C,D);
         lui_dong(renderer,box);
@@ -639,6 +669,10 @@ int main(int argc, char* argv[])
 
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
             SDL_RenderClear(renderer);
+            SDL_Color color = { 255, 255, 255 };
+            surface = TTF_RenderText_Solid(font,"Score", color);
+            texture = SDL_CreateTextureFromSurface(renderer, surface);
+            SDL_RenderCopy(renderer, texture, NULL, NULL);
 
             ve_le(renderer,box);
             box.render(renderer,A,B,C,D);
@@ -648,6 +682,7 @@ int main(int argc, char* argv[])
             int time_delay = 200;
             ve_le2(renderer,box);
 
+            khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
             SDL_RenderPresent(renderer);
 
             SDL_Delay(time_delay);
@@ -660,19 +695,28 @@ int main(int argc, char* argv[])
                 }
                 if (e.type == SDL_KEYDOWN)
                 {
-                    SDL_Delay(time_delay/6);
+
                     switch (e.key.keysym.sym)
                     {
                     case SDLK_ESCAPE:
                         break;
                     case SDLK_a:
+                        SDL_Delay(time_delay/6);
                         turnLeft(box,A,B,C,D,b);
                         break;
                     case SDLK_d:
+                        SDL_Delay(time_delay/6);
                         turnRight(box,A,B,C,D,b);
                         break;
-                    //case SDLK_s: box.turnDown(); break;
+                    case SDLK_s:
+                        while(IsMove(box,A,B,C,D,0))
+                        {
+                            a++;
+                            box.get_toa_do_Tam(a,b);
+                        }
+                        break;
                     case SDLK_w:
+                        SDL_Delay(time_delay/6);
                         if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D))
                         {
                             k++;
@@ -683,6 +727,7 @@ int main(int argc, char* argv[])
                             ve_gach_da_co_dinh(renderer,box);
                             box.render(renderer,A,B,C,D);
                             ve_le2(renderer,box);
+                            khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
                             SDL_RenderPresent(renderer);
                             SDL_Delay(time_delay*2/5);
                         }
@@ -697,7 +742,6 @@ int main(int argc, char* argv[])
 
                 if(end_game(box))
                 {
-
                     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
                     SDL_RenderClear(renderer);
                     ve_le(renderer,box);
@@ -721,6 +765,13 @@ int main(int argc, char* argv[])
         }
 
     }
+    SDL_DestroyTexture(texture);
+    SDL_FreeSurface(surface);
+    TTF_CloseFont(font);
+    TTF_Quit();
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
     quitSDL(window, renderer);
+
     return 0;
 }
