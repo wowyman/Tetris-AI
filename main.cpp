@@ -608,24 +608,54 @@ void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)
 {
     SDL_Rect rect;
     rect.x = 29*box.size;
-    rect.y = 8*box.size;
+    rect.y = 4*box.size;
     rect.w = 5*box.size;
     rect.h = 6*box.size;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderFillRect(renderer,&rect);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,29*box.size,8*box.size,34*box.size,8*box.size);
+    SDL_RenderDrawLine(renderer,29*box.size,4*box.size,34*box.size,4*box.size);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,34*box.size,8*box.size,34*box.size,14*box.size);
+    SDL_RenderDrawLine(renderer,34*box.size,4*box.size,34*box.size,10*box.size);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,29*box.size,14*box.size,34*box.size,14*box.size);
+    SDL_RenderDrawLine(renderer,29*box.size,10*box.size,34*box.size,10*box.size);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,29*box.size,8*box.size,29*box.size,14*box.size);
+    SDL_RenderDrawLine(renderer,29*box.size,4*box.size,29*box.size,10*box.size);
     point a,b,c,d;
-    box.get_toa_do_Tam(11,31);
+    box.get_toa_do_Tam(7,31);
     box.getType(hinh_truoc);
     getABCD(box,a,b,c,d);
     box.render(renderer,a,b,c,d);
+
+}
+void print_score(gach box,SDL_Renderer *renderer,SDL_Surface *surface, SDL_Texture * texture,TTF_Font * font)
+{
+
+    SDL_Rect rect;
+    rect.x = 29*box.size;
+    rect.y = 11*box.size;
+    rect.w = 5*box.size;
+    rect.h = 6*box.size;
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_RenderFillRect(renderer,&rect);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLine(renderer,29*box.size,11*box.size,34*box.size,11*box.size);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLine(renderer,34*box.size,11*box.size,34*box.size,17*box.size);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLine(renderer,29*box.size,17*box.size,34*box.size,17*box.size);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLine(renderer,29*box.size,11*box.size,29*box.size,17*box.size);
+
+    SDL_Color color = { 255, 0, 255 };
+    surface = TTF_RenderText_Solid(font,"SCORE", color);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    int texW = 0;
+    int texH = 0;
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    SDL_Rect dstrect = { 290*2, 110*2, 60, 20 };
+    SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+    SDL_RenderPresent(renderer);
 }
 int main(int argc, char* argv[])
 {
@@ -640,12 +670,7 @@ int main(int argc, char* argv[])
     a=2;
     b=20;
     box.get_toa_do_Tam(a,b);
-    //ttf
-    TTF_Init();
-    TTF_Font * font = TTF_OpenFont("arial.ttf", 10);
-    SDL_Surface * surface ;
-     SDL_Texture * texture ;
-    //end
+
     srand(time(0));
     int hinh_truoc = rand() % 7 + 1,hinh_sau;
     int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size-1;
@@ -653,26 +678,41 @@ int main(int argc, char* argv[])
     init(le_trai,le_phai);
     gach box1;
     SDL_Event e;
+
+    TTF_Init();
+    SDL_Color color = { 255, 0, 255 };
+    TTF_Font * font = TTF_OpenFont("vgafix.fon", 80);
+
+    SDL_Surface * surface ;
+    SDL_Texture * texture = NULL;
+    surface = TTF_RenderText_Solid(font,
+                            "SCORE", color);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    int texW = 0;
+    int texH = 0;
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    SDL_Rect dstrect = { 290*2, 110*2, 60, 20 };
+    SDL_RenderCopy(renderer, texture, NULL, &dstrect);
     while(!end)
     {
         k=0;//dung de quay truong hop 7,3,4
         hinh_sau = hinh_truoc;
         box.getType(hinh_sau);
-        srand(time(0));
-        hinh_truoc = rand() % 7 + 1;
 
         box.get_toa_do_Tam(a,b);
         getABCD(box,A,B,C,D);
         lui_dong(renderer,box);
+        srand(time(0));
+        hinh_truoc = rand() % 7 + 1;
         while(!quit)
         {
 
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
             SDL_RenderClear(renderer);
-            SDL_Color color = { 255, 255, 255 };
-            surface = TTF_RenderText_Solid(font,"Score", color);
-            texture = SDL_CreateTextureFromSurface(renderer, surface);
-            SDL_RenderCopy(renderer, texture, NULL, NULL);
+//            SDL_Color color = { 255, 255, 255 };
+//            surface = TTF_RenderText_Solid(font,"Score", color);
+//            texture = SDL_CreateTextureFromSurface(renderer, surface);
+//            SDL_RenderCopy(renderer, texture, NULL, NULL);
 
             ve_le(renderer,box);
             box.render(renderer,A,B,C,D);
@@ -683,6 +723,7 @@ int main(int argc, char* argv[])
             ve_le2(renderer,box);
 
             khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
+            //print_score(box,renderer,surface,texture,font);
             SDL_RenderPresent(renderer);
 
             SDL_Delay(time_delay);
@@ -765,12 +806,12 @@ int main(int argc, char* argv[])
         }
 
     }
-    SDL_DestroyTexture(texture);
-    SDL_FreeSurface(surface);
-    TTF_CloseFont(font);
-    TTF_Quit();
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+//    SDL_DestroyTexture(texture);
+//    SDL_FreeSurface(surface);
+//    TTF_CloseFont(font);
+//    TTF_Quit();
+//    SDL_DestroyRenderer(renderer);
+//    SDL_DestroyWindow(window);
     quitSDL(window, renderer);
 
     return 0;
