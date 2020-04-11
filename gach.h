@@ -26,6 +26,7 @@ struct point
 struct gach
 {
     int size = 20;
+
     point tam;
     int type;
     void get_toa_do_Tam(int _x,int _y)
