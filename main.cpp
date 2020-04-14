@@ -102,10 +102,10 @@ int main(int argc, char* argv[])
             hinh_truoc = rand() % 7 + 1;
             while(!quit)
             {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+                SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                 SDL_RenderClear(renderer);
                 ve_le(renderer,box);
-                box.render(renderer,A,B,C,D);
+                box.render(renderer,A,B,C,D,box.type);
 
                 goDown(box,A,B,C,D,a);
                 ve_gach_da_co_dinh(renderer,box);
@@ -145,14 +145,14 @@ int main(int argc, char* argv[])
                             {
                                 goDown(box,A,B,C,D,a);
                             }
-                            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+                            SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                             SDL_RenderClear(renderer);
                             ve_gach_da_co_dinh(renderer,box);
                             ve_le(renderer,box);
                             ve_le2(renderer,box);
                             printScore(renderer,score);
                             khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
-                            box.render(renderer,A,B,C,D);
+                            box.render(renderer,A,B,C,D,box.type);
                             SDL_RenderPresent(renderer);
                             break;
                         case SDLK_w:
@@ -161,12 +161,12 @@ int main(int argc, char* argv[])
                             {
                                 k++;
                                 xoay(renderer,box,k,A,B,C,D);
-                                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+                                SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                                 SDL_RenderClear(renderer);
                                 ve_le(renderer,box);
                                 ve_gach_da_co_dinh(renderer,box);
                                 printScore(renderer,score);
-                                box.render(renderer,A,B,C,D);
+                                box.render(renderer,A,B,C,D,box.type);
                                 ve_le2(renderer,box);
                                 khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
                                 SDL_RenderPresent(renderer);
@@ -180,11 +180,11 @@ int main(int argc, char* argv[])
 
                 if(!IsMove(box,A,B,C,D,0))
                 {
-                    co_dinh_gach(A,B,C,D);
+                    co_dinh_gach(A,B,C,D,box);
 
                     if(end_game(box))
                     {
-                        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+                        SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                         SDL_RenderClear(renderer);
                         ve_le(renderer,box);
                         ve_gach_da_co_dinh(renderer,box);

@@ -75,7 +75,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
     }
     else
     {
-        if(board_game[a.x][a.y]==-1 || board_game[a.x][a.y] == 1)
+        if(board_game[a.x][a.y]==-1 || board_game[a.x][a.y] == 1 || board_game[a.x][a.y] == 2 || board_game[a.x][a.y] == 3 || board_game[a.x][a.y] == 4 || board_game[a.x][a.y] == 5||board_game[a.x][a.y] == 6|| board_game[a.x][a.y] == 7)
         {
             check1 = false;
         }
@@ -91,7 +91,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
     }
     else
     {
-        if(board_game[b.x][b.y]==-1 || board_game[b.x][b.y] == 1)
+        if(board_game[b.x][b.y]==-1 || board_game[b.x][b.y] == 1|| board_game[b.x][b.y] == 2|| board_game[b.x][b.y] == 3 || board_game[b.x][b.y] == 4 || board_game[b.x][b.y] == 5 || board_game[b.x][b.y] == 6 || board_game[b.x][b.y] == 7)
         {
             check2 = false;
         }
@@ -109,7 +109,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
 
     else
     {
-        if(board_game[c.x][c.y]==-1 || board_game[c.x][c.y] == 1)
+        if(board_game[c.x][c.y]==-1 || board_game[c.x][c.y] == 1|| board_game[c.x][c.y] == 2|| board_game[c.x][c.y] == 3|| board_game[c.x][c.y] == 4|| board_game[c.x][c.y] == 5|| board_game[c.x][c.y] == 6|| board_game[c.x][c.y] == 7)
         {
             check3 = false;
         }
@@ -124,7 +124,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
     }
     else
     {
-        if(board_game[d.x][d.y]==-1 || board_game[d.x][d.y] == 1)
+        if(board_game[d.x][d.y]==-1 || board_game[d.x][d.y] == 1|| board_game[d.x][d.y] == 2|| board_game[d.x][d.y] == 3|| board_game[d.x][d.y] == 4|| board_game[d.x][d.y] == 5|| board_game[d.x][d.y] == 6|| board_game[d.x][d.y] == 7)
         {
             check4 = false;
         }
@@ -321,92 +321,58 @@ void ve_le(SDL_Renderer *renderer,gach &box)
     rect.y = 0;
     rect.w = (SCREEN_WIDTH-10*box.size)/2 ;
     rect.h = SCREEN_HEIGHT;
-    SDL_SetRenderDrawColor(renderer, 123, 234, 100, 200);
+    SDL_SetRenderDrawColor(renderer, 191,201,217,0);
     SDL_RenderFillRect(renderer, &rect);
 
     SDL_Rect rect2;
-    rect2.x = SCREEN_WIDTH-(SCREEN_WIDTH-10*box.size)/2;
+    rect2.x = SCREEN_WIDTH-(SCREEN_WIDTH-10*box.size)/2+1;
     rect2.y = 0;
     rect2.w = (SCREEN_WIDTH-10*box.size)/2;
     rect2.h = SCREEN_HEIGHT;
-    SDL_SetRenderDrawColor(renderer, 123, 234, 100, 200);
+    SDL_SetRenderDrawColor(renderer, 191,201,217,0);
     SDL_RenderFillRect(renderer, &rect2);
 
     SDL_Rect rect3;
     rect3.x = (SCREEN_WIDTH-10*box.size)/2 ;
-    rect3.y = SCREEN_HEIGHT-box.size;
+    rect3.y = SCREEN_HEIGHT-box.size+1;
     rect3.w = 10*box.size;
     rect3.h = box.size;
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_SetRenderDrawColor(renderer,0, 28, 101, 0);
     SDL_RenderFillRect(renderer, &rect3);
-    SDL_Rect rect4[10];
-    for(int i=0; i<10; i++)
-    {
-        rect4[i].x = (SCREEN_WIDTH-10*box.size)/2 + i*box.size;
-        rect4[i].y = SCREEN_HEIGHT-box.size;
-        rect4[i].w = box.size;
-        rect4[i].h = box.size;
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderDrawRect(renderer, &rect4[i]);
-    }
-    SDL_Rect rect7;
-    rect7.x = (SCREEN_WIDTH-10*box.size)/2 - box.size;
-    rect7.y = 3*box.size;
-    rect7.w = box.size;
-    rect7.h = 39*box.size;
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+    SDL_RenderDrawLine(renderer,16*box.size,34*box.size+1,26*box.size-1,34*box.size+1);
 
-    SDL_RenderFillRect(renderer, &rect7);
-    rect7.x = (SCREEN_WIDTH-10*box.size)/2 - box.size + 11*box.size;
-    rect7.y = 3*box.size;
-    rect7.w = box.size;
-    rect7.h = 39*box.size;
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    SDL_RenderFillRect(renderer, &rect7);
-    SDL_Rect rect5[39];
-    SDL_Rect rect6[39];
-    for(int i=3; i<=41; i++)
-    {
-        rect5[i].x = (SCREEN_WIDTH-10*box.size)/2 - box.size;
-        rect5[i].y = i*box.size;
-        rect5[i].w = box.size;
-        rect5[i].h = box.size;
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderDrawRect(renderer, &rect5[i]);
-        rect6[i].x = (SCREEN_WIDTH-10*box.size)/2 - box.size + 11*box.size;
-        rect6[i].y = i*box.size;
-        rect6[i].w = box.size;
-        rect6[i].h = box.size;
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderDrawRect(renderer, &rect6[i]);
-    }
 }
 void ve_le2(SDL_Renderer *renderer,gach &box)
 {
     SDL_Rect rect5;
     rect5.x = (SCREEN_WIDTH-10*box.size)/2 ;
     rect5.y = 0;
-    rect5.w = 10*box.size;
-    rect5.h = 3*box.size;
-    SDL_SetRenderDrawColor(renderer, 123, 234, 100, 200);
+    rect5.w = 10*box.size+1;
+    rect5.h = 4*box.size;
+    SDL_SetRenderDrawColor(renderer, 191,201,217,0);
     SDL_RenderFillRect(renderer, &rect5);
-    SDL_Rect rect3;
-    rect3.x = (SCREEN_WIDTH-10*box.size)/2 ;
-    rect3.y = 3*box.size;
-    rect3.w = 10*box.size;
-    rect3.h = box.size;
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    SDL_RenderFillRect(renderer, &rect3);
-    SDL_Rect rect4[10];
-    for(int i=0; i<10; i++)
-    {
-        rect4[i].x = (SCREEN_WIDTH-10*box.size)/2 + i*box.size;
-        rect4[i].y = 3*box.size;
-        rect4[i].w = box.size;
-        rect4[i].h = box.size;
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderDrawRect(renderer, &rect4[i]);
-    }
+//    SDL_Rect rect3;
+//    rect3.x = (SCREEN_WIDTH-10*box.size)/2;
+//    rect3.y = 3*box.size;
+//    rect3.w = 10*box.size;
+//    rect3.h = box.size;
+//    SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+//    SDL_RenderFillRect(renderer, &rect3);
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+    SDL_RenderDrawLine(renderer,16*box.size,4*box.size,26*box.size-1,4*box.size);
+    TTF_Init();
+    TTF_Font * font = TTF_OpenFont("vgafix.fon", 500);
+    SDL_Color color = { 255,0 , 255};
+    SDL_Surface * surface = TTF_RenderText_Solid(font,
+                            "TETRIS", color);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+    int texW = 0;
+    int texH = 0;
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    SDL_Rect dstrect = { 14*20, 0, 14*20, 3*20 };
+    SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
 }
 bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)
@@ -422,12 +388,13 @@ bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)
     //cout<<checkA<<","<<checkB<<","<<checkC<<","<<checkD<<endl;
     return check;
 }
-void co_dinh_gach(point A,point B,point C,point D)
+void co_dinh_gach(point A,point B,point C,point D,gach &box)
 {
-    board_game[A.x][A.y] = 1;
-    board_game[B.x][B.y] = 1;
-    board_game[C.x][C.y] = 1;
-    board_game[D.x][D.y] = 1;
+
+    board_game[A.x][A.y] = box.type;
+    board_game[B.x][B.y] = box.type;
+    board_game[C.x][C.y] = box.type;
+    board_game[D.x][D.y] = box.type;
 }
 void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)
 {
@@ -435,24 +402,39 @@ void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)
     {
         for(int j=16; j<=25; j++)
         {
-            if(board_game[i][j] == 1)
+            if(board_game[i][j] != 0)
             {
+                if(board_game[i][j] == 1)
+                    SDL_SetRenderDrawColor(renderer, 39, 200, 0, 0);
+                else if (board_game[i][j] == 2)
+                    SDL_SetRenderDrawColor(renderer, 254,245, 6, 0);
+                else if (board_game[i][j] == 3)
+                    SDL_SetRenderDrawColor(renderer,0, 145, 222, 0);
+                else if (board_game[i][j] == 4)
+                    SDL_SetRenderDrawColor(renderer, 239, 165, 4, 0);
+                else if (board_game[i][j] == 5)
+                    SDL_SetRenderDrawColor(renderer, 3, 135, 68,0);
+                else if (board_game[i][j] == 6)
+                    SDL_SetRenderDrawColor(renderer,196, 13, 241, 0);
+                else
+                    SDL_SetRenderDrawColor(renderer, 247, 15, 3, 0);
                 SDL_Rect rect;
                 rect.x = j*box.size;
                 rect.y = i*box.size;
                 rect.h = box.size;
                 rect.w = box.size;
-                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
                 SDL_RenderFillRect(renderer, &rect);
-                SDL_SetRenderDrawColor(renderer, 100, 100, 100, 100);
+
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                 SDL_RenderDrawLine(renderer,j*box.size,i*box.size,j*box.size+box.size,i*box.size);
-                SDL_SetRenderDrawColor(renderer, 100, 100, 100, 100);
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                 SDL_RenderDrawLine(renderer,j*box.size+box.size,i*box.size,j*box.size+box.size,i*box.size+box.size);
-                SDL_SetRenderDrawColor(renderer, 100, 100, 100, 100);
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                 SDL_RenderDrawLine(renderer,j*box.size+box.size,i*box.size+box.size,j*box.size,i*box.size+box.size);
-                SDL_SetRenderDrawColor(renderer, 100, 100, 100, 100);
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                 SDL_RenderDrawLine(renderer,j*box.size,i*box.size+box.size,j*box.size,i*box.size);
             }
+
         }
     }
 }
@@ -470,7 +452,7 @@ void lui_dong(SDL_Renderer *renderer,gach &box)
     {
         for(int j=4; j<34; j++)
         {
-            if(board_game[j][i] == 1)
+            if(board_game[j][i] ==1 || board_game[j][i] ==2 || board_game[j][i] ==3 || board_game[j][i] ==4 || board_game[j][i] ==5 || board_game[j][i] ==6 || board_game[j][i] ==7)
                 count[j]++;
         }
     }
@@ -502,7 +484,7 @@ bool end_game(gach &box)
     int le_phai = le_trai+9;
     for(int i=le_trai; i<=le_phai; i++)
     {
-        if(board_game[4][i] == 1)
+        if(board_game[4][i] == 1 || board_game[4][i] == 2 || board_game[4][i] == 3 || board_game[4][i] == 4 || board_game[4][i] == 5 || board_game[4][i] == 6 || board_game[4][i] == 7)
             return true;
     }
     return false;
@@ -543,7 +525,7 @@ bool end_game(gach &box)
 //        SDL_RenderPresent(renderer);
 //    }
 //}
-void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)
+void khoi_gach_tiep_theo(gach &box,SDL_Renderer *renderer,int hinh_truoc)
 {
     SDL_Rect rect;
     rect.x = 29*box.size;
@@ -552,50 +534,33 @@ void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)
     rect.h = 6*box.size;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderFillRect(renderer,&rect);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    if(box.type == 1)
+        SDL_SetRenderDrawColor(renderer, 39, 200, 0, 0);
+    else if (box.type == 2)
+        SDL_SetRenderDrawColor(renderer, 254,245, 6, 0);
+    else if (box.type == 3)
+        SDL_SetRenderDrawColor(renderer, 0, 145, 222, 0);
+    else if (box.type == 4)
+        SDL_SetRenderDrawColor(renderer,  239, 165, 4, 0);
+    else if (box.type == 5)
+        SDL_SetRenderDrawColor(renderer, 3, 135, 68,0);
+    else if (box.type == 6)
+        SDL_SetRenderDrawColor(renderer,196, 13, 241, 0);
+    else
+        SDL_SetRenderDrawColor(renderer,  247, 15, 3, 0);
+
     SDL_RenderDrawLine(renderer,29*box.size,4*box.size,34*box.size,4*box.size);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderDrawLine(renderer,34*box.size,4*box.size,34*box.size,10*box.size);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderDrawLine(renderer,29*box.size,10*box.size,34*box.size,10*box.size);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderDrawLine(renderer,29*box.size,4*box.size,29*box.size,10*box.size);
     point a,b,c,d;
     box.get_toa_do_Tam(7,31);
     box.getType(hinh_truoc);
     getABCD(box,a,b,c,d);
-    box.render(renderer,a,b,c,d);
+    box.render(renderer,a,b,c,d,box.type);
 
 }
-void print_score(gach box,SDL_Renderer *renderer,SDL_Surface *surface, SDL_Texture * texture,TTF_Font * font)
-{
 
-    SDL_Rect rect;
-    rect.x = 29*box.size;
-    rect.y = 11*box.size;
-    rect.w = 5*box.size;
-    rect.h = 6*box.size;
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    SDL_RenderFillRect(renderer,&rect);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,29*box.size,11*box.size,34*box.size,11*box.size);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,34*box.size,11*box.size,34*box.size,17*box.size);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,29*box.size,17*box.size,34*box.size,17*box.size);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,29*box.size,11*box.size,29*box.size,17*box.size);
-
-    SDL_Color color = { 255, 0, 255 };
-    surface = TTF_RenderText_Solid(font,"SCORE", color);
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
-    int texW = 0;
-    int texH = 0;
-    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { 290*2, 110*2, 60, 20 };
-    SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-    SDL_RenderPresent(renderer);
-}
 void printScore(SDL_Renderer *renderer,int number)
 {
     SDL_Rect rect = { 29*20, 20*11, 5*20, 6*20};
@@ -611,7 +576,7 @@ void printScore(SDL_Renderer *renderer,int number)
     SDL_RenderDrawLine(renderer,29*20,11*20,29*20,17*20);
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 80);
-    SDL_Color color = { 255, 0, 255 };
+    SDL_Color color = { 3, 87, 231 };
     SDL_Surface * surface = TTF_RenderText_Solid(font,
                             "SCORE", color);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
