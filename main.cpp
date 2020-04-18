@@ -3,13 +3,11 @@
 #include <SDL_ttf.h>
 #include <cstdlib>
 #include <ctime>
-#include <thread>
-#include <chrono>
 #include "gach.h"
 #include "function.h"
 using namespace std;
 
-int game_play = -1;
+bool play_again = false;
 void logSDLError(std::ostream& os,const std::string &msg, bool fatal = false);
 
 void logSDLError(std::ostream& os, const std::string &msg, bool fatal)
@@ -64,8 +62,7 @@ void waitUntilKeyPressed()
         SDL_Delay(100);
     }
 }
-
-int main(int argc, char* argv[])
+void playGame()
 {
     SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
     SDL_Window* window;
@@ -73,45 +70,46 @@ int main(int argc, char* argv[])
     initSDL(window, renderer);
     while(true)
     {
-        game_play = -1;
+        play_again = false;
         gach box;
+        int time_delay;
         point A,B,C,D;
         int a,b;//toa do tam
         bool quit = false,end = false;
         a=2;
-        b=20;
+        b=dai/2-1;
         box.get_toa_do_Tam(a,b);
         score = 0;
         srand(time(0));
         int hinh_truoc = rand() % 7 + 1, hinh_sau;
-        int le_trai = ((SCREEN_WIDTH -10*box.size)/2)/box.size-1;
-        int le_phai = le_trai + 11;
-        init( le_trai, le_phai);
+
+        init();
         gach box1;
         SDL_Event e;
         while(!end)
         {
+            quit = false;
             k=0;//dung de quay truong hop 7,3,4
             hinh_sau = hinh_truoc;
             box.getType(hinh_sau);
             box.get_toa_do_Tam(a,b);
             getABCD(box,A,B,C,D);
             lui_dong(renderer,box);
-            SDL_Delay(250);
+            SDL_Delay(150);
             srand(time(0));
             hinh_truoc = rand() % 7 + 1;
             while(!quit)
             {
                 SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                 SDL_RenderClear(renderer);
-                ve_le(renderer,box);
+                ve_le(renderer);
                 box.render(renderer,A,B,C,D,box.type);
 
-                goDown(box,A,B,C,D,a);
+                goDown(box,A,B,C,D,a,renderer);
                 ve_gach_da_co_dinh(renderer,box);
                 printScore(renderer,score);
-                int time_delay = 200;
-                ve_le2(renderer,box);
+                time_delay = 150;
+                ve_le2(renderer);
 
                 khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
 
@@ -133,47 +131,47 @@ int main(int argc, char* argv[])
                         case SDLK_ESCAPE:
                             break;
                         case SDLK_a:
-                            SDL_Delay(time_delay/6);
+                            SDL_Delay(time_delay/7);
                             turnLeft(box,A,B,C,D,b);
                             break;
                         case SDLK_d:
-                            SDL_Delay(time_delay/6);
+                            SDL_Delay(time_delay/7);
                             turnRight(box,A,B,C,D,b);
                             break;
                         case SDLK_s:
                             while(IsMove(box,A,B,C,D,0))
                             {
-                                goDown(box,A,B,C,D,a);
+                                goDown(box,A,B,C,D,a,renderer);
                             }
                             SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                             SDL_RenderClear(renderer);
+                            co_dinh_gach(A,B,C,D,box);
                             ve_gach_da_co_dinh(renderer,box);
-                            ve_le(renderer,box);
-                            ve_le2(renderer,box);
+                            ve_le(renderer);
+                            ve_le2(renderer);
                             printScore(renderer,score);
                             khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
                             box.render(renderer,A,B,C,D,box.type);
                             SDL_RenderPresent(renderer);
                             break;
                         case SDLK_w:
-                            SDL_Delay(time_delay/6);
+                            SDL_Delay(time_delay/7);
                             if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D))
                             {
                                 k++;
                                 xoay(renderer,box,k,A,B,C,D);
                                 SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                                 SDL_RenderClear(renderer);
-                                ve_le(renderer,box);
+                                ve_le(renderer);
                                 ve_gach_da_co_dinh(renderer,box);
                                 printScore(renderer,score);
                                 box.render(renderer,A,B,C,D,box.type);
-                                ve_le2(renderer,box);
+                                ve_le2(renderer);
                                 khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
                                 SDL_RenderPresent(renderer);
-                                SDL_Delay(time_delay*2/5);
+                                SDL_Delay(time_delay*1/5);
                             }
                             break;
-
                         }
                     }
                 }
@@ -186,33 +184,38 @@ int main(int argc, char* argv[])
                     {
                         SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                         SDL_RenderClear(renderer);
-                        ve_le(renderer,box);
+                        ve_le(renderer);
                         ve_gach_da_co_dinh(renderer,box);
-                        ve_le2(renderer,box);
+                        khoi_gach_tiep_theo(box,renderer,hinh_truoc);
+                        ve_le2(renderer);
                         printScore(renderer,score);
                         printEndgame(renderer,score);
                         SDL_RenderPresent(renderer);
+
+                        SDL_Event e1;
                         end = true;
-                        while(game_play == -1)
+                        while (!play_again)
                         {
-                            while( SDL_PollEvent( &e ) != 0 )
+                            SDL_Delay(10);
+                            if ( SDL_PollEvent(&e1) == 0)
+                                continue;
+                            if (e1.type == SDL_QUIT)
+                                break;
+                            if (e1.type == SDL_KEYDOWN && e1.key.keysym.sym == SDLK_ESCAPE)
                             {
-                                if( e.type == SDL_QUIT )
+                                play_again = false;
+                                break;
+                            }
+                            if (e1.type == SDL_MOUSEBUTTONDOWN)
+                            {
+                                bool checkk = (e1.button.x >= (le_trai+2)*20+22 && e1.button.x <= (le_trai+2)*20+22+116 &&
+                                               e1.button.y >= 150*2-2 && e1.button.y <= 150*2-2 + 23);
+                                if(checkk)
                                 {
-                                    quit = true;
+                                    play_again = true;
+                                    break;
                                 }
-                                if (e.type == SDL_KEYDOWN)
-                                {
-                                    switch (e.key.keysym.sym)
-                                    {
-                                    case SDLK_n:
-                                        game_play = 0;
-                                        break;
-                                    case SDLK_y:
-                                        game_play = 1;
-                                        break;
-                                    }
-                                }
+                                else continue;
                             }
                         }
                         break;
@@ -220,17 +223,117 @@ int main(int argc, char* argv[])
                     else
                     {
                         a=2;
-                        b=20;
+                        b=dai/2-1;
                         break;
                     }
                 }
             }
         }
-        if(game_play == 0)
-            break;
-        if(game_play == 1)
-            SDL_Delay(500);
+        if(play_again == true)
+        {
             continue;
+        }
+        else
+        {
+            break;
+        }
     }
     quitSDL(window, renderer);
+}
+void drawStart(SDL_Renderer *renderer1)
+{
+    ve_le(renderer1);
+    ve_le2(renderer1);
+    SDL_Rect filled_rect;
+    filled_rect.x = 20*(le_trai+1)+20;
+    filled_rect.y = SCREEN_HEIGHT/2 - 180;
+    filled_rect.w = 160;
+    filled_rect.h = 200;
+    SDL_SetRenderDrawColor(renderer1,0, 170, 170, 0);
+    SDL_RenderFillRect(renderer1,&filled_rect);
+
+    filled_rect.x = 20*(le_trai+1)+36;
+    filled_rect.y = SCREEN_HEIGHT/2 - 165;
+    filled_rect.w = 124;
+    filled_rect.h = 80;
+    SDL_SetRenderDrawColor(renderer1, 0, 0, 0, 0);
+    SDL_RenderFillRect(renderer1,&filled_rect);
+
+}
+int main(int argc, char* argv[])
+{
+    cout<<"click Play to start."<<endl;
+    SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
+    SDL_Window* window1;
+    SDL_Renderer* renderer1;
+    initSDL(window1, renderer1);
+    drawStart(renderer1);
+
+    TTF_Init();
+    TTF_Font * font = TTF_OpenFont("vgafix.fon", 20);
+    SDL_Color color = { 255, 0, 0 };
+    SDL_Surface * surface = TTF_RenderText_Solid(font,
+                            "HIGH SCORE", color);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer1, surface);
+    int texW = 0;
+    int texH = 0;
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    SDL_Rect dstrect = { 20*(le_trai+1)+55, SCREEN_HEIGHT/2 - 165, 90, 18 };
+    SDL_RenderCopy(renderer1, texture, NULL, &dstrect);
+
+    //ve nut PLAY
+    SDL_Rect filled_rect;
+    filled_rect.x = 20*(le_trai+1)+60;
+    filled_rect.y = SCREEN_HEIGHT/2 - 40;
+    filled_rect.w = 80;
+    filled_rect.h = 40;
+    SDL_SetRenderDrawColor(renderer1, 0,0,0,0);
+    SDL_RenderFillRect(renderer1,&filled_rect);
+    //vien nut
+    filled_rect.x = 20*(le_trai+1)+60;
+    filled_rect.y = SCREEN_HEIGHT/2 - 40;
+    filled_rect.w = 80;
+    filled_rect.h = 40;
+    SDL_SetRenderDrawColor(renderer1, 254,245, 6, 0);
+    SDL_RenderDrawRect(renderer1,&filled_rect);
+
+    font = TTF_OpenFont("vgafix.fon", 500);
+    color = { 66, 103, 178 };
+    surface = TTF_RenderText_Solid(font, "PLAY", color);
+    texture = SDL_CreateTextureFromSurface(renderer1, surface);
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    dstrect = { 20*(le_trai+1)+64, SCREEN_HEIGHT/2 - 38, 72, 32 };
+    SDL_RenderCopy(renderer1, texture, NULL, &dstrect);
+    SDL_RenderPresent(renderer1);
+    bool play = false;
+    SDL_Event e1;
+    while (true)
+    {
+        SDL_Delay(10);
+        if ( SDL_PollEvent(&e1) == 0)
+            continue;
+        if (e1.type == SDL_QUIT)
+            break;
+        if (e1.type == SDL_KEYDOWN && e1.key.keysym.sym == SDLK_ESCAPE)
+            break;
+        if (e1.type == SDL_MOUSEBUTTONDOWN)
+        {
+            bool checkk = (e1.button.x >= 20*(le_trai+1)+60 && e1.button.x <= 20*(le_trai+1)+60+80 &&
+                           e1.button.y >= SCREEN_HEIGHT/2 - 40 && e1.button.y <= SCREEN_HEIGHT/2);
+            if(checkk)
+            {
+                play = true;
+                SDL_RenderClear(renderer1);
+                break;
+            }
+            else continue;
+        }
+    }
+    if(play == true)
+    {
+        SDL_Delay(50);
+        quitSDL(window1, renderer1);
+        playGame();
+    }
+    return 0;
 }

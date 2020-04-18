@@ -29,7 +29,7 @@ struct gach
 
     point tam;
     int type;
-    void get_toa_do_Tam(int _x,int _y)
+    void get_toa_do_Tam(double _x,double _y)
     {
         tam.x = _x;
         tam.y = _y;

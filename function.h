@@ -1,28 +1,31 @@
 #include <iostream>
 using namespace std;
 
-const int SCREEN_WIDTH = 840;
-const int SCREEN_HEIGHT = 700;
 int k=0,score = 0;
-int board_game[35][42];
-void init(int le_trai,int le_phai)
+const int cao = 29;
+const int dai = 34;
+const int SCREEN_WIDTH = dai*20;
+const int SCREEN_HEIGHT = cao*20;
+int le_trai = (dai - 10)/2 -1;
+int le_phai = le_trai + 11;
+int board_game[cao][dai];
+void init()
 {
-    for(int i=0; i<34; i++)
+    for(int i=0; i<cao; i++)
     {
-        for(int j=1; j<41; j++)
+        for(int j=0; j<dai; j++)
+        {
+            board_game[i][j] = -1;
+        }
+    }
+    for(int i=0; i<cao-1; i++)
+    {
+        for(int j= le_trai+1; j<=le_phai-1; j++)
         {
             board_game[i][j] = 0;
         }
     }
-    for(int i=0; i<35; i++)
-    {
-        board_game[i][le_trai] = -1;
-        board_game[i][le_phai] = -1;
-    }
-    for(int i=1; i<=40; i++)
-    {
-        board_game[34][i] = -1;
-    }
+
 }
 bool la_o_thanh_phan(gach &box,point E,point &A,point &B,point &C,point &D)//kiem tra o nhan vao co la 1 trong 4 o cua khoi gach khong, neu co tra ve true ,khong tra ve false
 {
@@ -200,29 +203,29 @@ void xoay(SDL_Renderer *renderer,gach& box,int k,point& A,point& B,point& C,poin
 void getABCD(gach box,point &A,point &B,point &C,point &D)
 {
 
-    if(box.type == 1)
+    if(box.type == 1)//L
     {
         A.x = box.tam.x - 1;
-        A.y = box.tam.y - 1;
+        A.y = box.tam.y;
         B.x = box.tam.x;
-        B.y = box.tam.y - 1;
+        B.y = box.tam.y;
         C.x = box.tam.x + 1;
-        C.y = box.tam.y - 1;
+        C.y = box.tam.y;
         D.x = box.tam.x + 1;
-        D.y = box.tam.y;
+        D.y = box.tam.y + 1;
     }
-    if(box.type == 2)
+    if(box.type == 2)//J
     {
         A.x = box.tam.x - 1;
-        A.y = box.tam.y + 1;
+        A.y = box.tam.y ;
         B.x = box.tam.x;
-        B.y = box.tam.y +1;
+        B.y = box.tam.y;
         C.x = box.tam.x + 1;
-        C.y = box.tam.y + 1;
+        C.y = box.tam.y;
         D.x = box.tam.x + 1;
-        D.y = box.tam.y;
+        D.y = box.tam.y - 1;
     }
-    if(box.type == 3)
+    if(box.type == 3)//Z
     {
         A.x = box.tam.x + 1;
         A.y = box.tam.y - 1;
@@ -233,7 +236,7 @@ void getABCD(gach box,point &A,point &B,point &C,point &D)
         D.x = box.tam.x;
         D.y = box.tam.y+1;
     }
-    if(box.type == 4)
+    if(box.type == 4)//S
     {
         A.x = box.tam.x;
         A.y = box.tam.y - 1;
@@ -244,7 +247,7 @@ void getABCD(gach box,point &A,point &B,point &C,point &D)
         D.x = box.tam.x + 1;
         D.y = box.tam.y + 1;
     }
-    if(box.type == 5)
+    if(box.type == 5)//T
     {
         A.x = box.tam.x - 1;
         A.y = box.tam.y;
@@ -255,7 +258,7 @@ void getABCD(gach box,point &A,point &B,point &C,point &D)
         D.x = box.tam.x;
         D.y = box.tam.y + 1;
     }
-    if(box.type == 6)
+    if(box.type == 6)//O
     {
         A.x = box.tam.x;
         A.y = box.tam.y;
@@ -266,7 +269,7 @@ void getABCD(gach box,point &A,point &B,point &C,point &D)
         D.x = box.tam.x + 1;
         D.y = box.tam.y + 1;
     }
-    if(box.type == 7)
+    if(box.type == 7)//I
     {
         A.x = box.tam.x - 2;
         A.y = box.tam.y;
@@ -304,86 +307,86 @@ void turnRight(gach &box,point &A,point &B,point &C,point &D,int &b)
     }
     else;
 }
-void goDown(gach &box,point &A,point &B,point &C,point &D,int &a)
+void goDown(gach &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *renderer)
 {
-    int v=1;
-    a+=v;
-    box.tam.x += v;
-    A.x += v;
-    B.x += v;
-    C.x += v;
-    D.x += v;
+    if(IsMove(box,A,B,C,D,0))
+    {
+        a+=1;
+        box.tam.x += 1;
+        A.x += 1;
+        B.x += 1;
+        C.x += 1;
+        D.x += 1;
+    }
+    else;
 }
-void ve_le(SDL_Renderer *renderer,gach &box)
+void ve_le(SDL_Renderer *renderer)
 {
     SDL_Rect rect;
     rect.x = 0;
     rect.y = 0;
-    rect.w = (SCREEN_WIDTH-10*box.size)/2 ;
+    rect.w = (SCREEN_WIDTH-10*20)/2 ;
     rect.h = SCREEN_HEIGHT;
     SDL_SetRenderDrawColor(renderer, 191,201,217,0);
     SDL_RenderFillRect(renderer, &rect);
 
     SDL_Rect rect2;
-    rect2.x = SCREEN_WIDTH-(SCREEN_WIDTH-10*box.size)/2+1;
+    rect2.x = SCREEN_WIDTH-(SCREEN_WIDTH-10*20)/2+1;
     rect2.y = 0;
-    rect2.w = (SCREEN_WIDTH-10*box.size)/2;
+    rect2.w = (SCREEN_WIDTH-10*20)/2;
     rect2.h = SCREEN_HEIGHT;
     SDL_SetRenderDrawColor(renderer, 191,201,217,0);
     SDL_RenderFillRect(renderer, &rect2);
 
     SDL_Rect rect3;
-    rect3.x = (SCREEN_WIDTH-10*box.size)/2 ;
-    rect3.y = SCREEN_HEIGHT-box.size+1;
-    rect3.w = 10*box.size;
-    rect3.h = box.size;
-    SDL_SetRenderDrawColor(renderer,0, 28, 101, 0);
+    rect3.x = (SCREEN_WIDTH-10*20)/2 ;
+    rect3.y = SCREEN_HEIGHT-20+1;
+    rect3.w = 10*20 + 1;
+    rect3.h = 20;
+    SDL_SetRenderDrawColor(renderer,191,201,217,0);
     SDL_RenderFillRect(renderer, &rect3);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-    SDL_RenderDrawLine(renderer,16*box.size,34*box.size+1,26*box.size-1,34*box.size+1);
 
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+    //SDL_RenderDrawLine(renderer,16*box.size,34*box.size+1,26*box.size-1,34*box.size+1);
+    rect.x = 15;
+    rect.y = 15;
+    rect.w = SCREEN_WIDTH - 30;
+    rect.h = SCREEN_HEIGHT - 30;
+    SDL_SetRenderDrawColor(renderer,255,255,255,0);
+    SDL_RenderDrawRect(renderer,&rect);
 }
-void ve_le2(SDL_Renderer *renderer,gach &box)
+void ve_le2(SDL_Renderer *renderer)
 {
     SDL_Rect rect5;
-    rect5.x = (SCREEN_WIDTH-10*box.size)/2 ;
+    rect5.x = (SCREEN_WIDTH-10*20)/2 ;
     rect5.y = 0;
-    rect5.w = 10*box.size+1;
-    rect5.h = 4*box.size;
+    rect5.w = 10*20+1;
+    rect5.h = 4*20;
     SDL_SetRenderDrawColor(renderer, 191,201,217,0);
     SDL_RenderFillRect(renderer, &rect5);
-//    SDL_Rect rect3;
-//    rect3.x = (SCREEN_WIDTH-10*box.size)/2;
-//    rect3.y = 3*box.size;
-//    rect3.w = 10*box.size;
-//    rect3.h = box.size;
-//    SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
-//    SDL_RenderFillRect(renderer, &rect3);
 
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-    SDL_RenderDrawLine(renderer,16*box.size,4*box.size,26*box.size-1,4*box.size);
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 500);
-    SDL_Color color = { 255,0 , 255};
+    SDL_Color color = { 255,0, 255};
     SDL_Surface * surface = TTF_RenderText_Solid(font,
                             "TETRIS", color);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { 14*20, 0, 14*20, 3*20 };
+    SDL_Rect dstrect = { (le_trai-1)*20, 0, 14*20, 3*20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
 }
 bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)
 {
     xoay(renderer,box,1,A,B,C,D);
-    int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
-    int le_phai = le_trai+9;
-    bool checkA = (A.y <= le_phai && A.y >= le_trai && board_game[A.x][A.y] == 0);
-    bool checkB = (B.y <= le_phai && B.y >= le_trai && board_game[B.x][B.y] == 0);
-    bool checkC = (C.y <= le_phai && C.y >= le_trai && board_game[C.x][C.y] == 0);
-    bool checkD = (D.y <= le_phai && D.y >= le_trai && board_game[D.x][D.y] == 0);
+    int le_trai1 = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
+    int le_phai1 = le_trai1+9;
+    bool checkA = (A.y <= le_phai1 && A.y >= le_trai1 && board_game[A.x][A.y] == 0);
+    bool checkB = (B.y <= le_phai1 && B.y >= le_trai1 && board_game[B.x][B.y] == 0);
+    bool checkC = (C.y <= le_phai1 && C.y >= le_trai1 && board_game[C.x][C.y] == 0);
+    bool checkD = (D.y <= le_phai1 && D.y >= le_trai1 && board_game[D.x][D.y] == 0);
     bool check = (checkA && checkB && checkC && checkD);
     //cout<<checkA<<","<<checkB<<","<<checkC<<","<<checkD<<endl;
     return check;
@@ -398,9 +401,9 @@ void co_dinh_gach(point A,point B,point C,point D,gach &box)
 }
 void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)
 {
-    for(int i=2; i<34; i++)
+    for(int i=2; i<cao-1; i++)
     {
-        for(int j=16; j<=25; j++)
+        for(int j=le_trai+1; j<=le_phai-1; j++)
         {
             if(board_game[i][j] != 0)
             {
@@ -439,30 +442,29 @@ void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)
     }
 }
 
-void lui_dong(SDL_Renderer *renderer,gach &box)
+void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem
 {
-    int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
-    int le_phai = le_trai+9;
-    int count[34];
-    for(int i=0; i<34; i++)
+
+    int count[cao-1];
+    for(int i=0; i<cao-1; i++)
     {
         count[i]=0;
     }
-    for(int i=le_trai; i<=le_phai; i++)
+    for(int i=le_trai+1; i<=le_phai-1; i++)
     {
-        for(int j=4; j<34; j++)
+        for(int j=4; j<cao-1; j++)
         {
             if(board_game[j][i] ==1 || board_game[j][i] ==2 || board_game[j][i] ==3 || board_game[j][i] ==4 || board_game[j][i] ==5 || board_game[j][i] ==6 || board_game[j][i] ==7)
                 count[j]++;
         }
     }
-    for(int i = 34; i>=5;)
+    for(int i = cao-2; i>=5;)
     {
         if(count[i]== 10)
         {
             for(int j=i; j>=4; j--)
             {
-                for(int k=le_trai; k<=le_phai; k++)
+                for(int k=le_trai+1; k<=le_phai-1; k++)
                 {
                     board_game[j][k] = board_game[j-1][k];
                     board_game[4][k]=0;
@@ -470,7 +472,7 @@ void lui_dong(SDL_Renderer *renderer,gach &box)
                 count[j]=count[j-1];
                 count[4]=0;
             }
-            score+=10;
+            score+=1;
         }
         else i--;
     }
@@ -480,55 +482,18 @@ void lui_dong(SDL_Renderer *renderer,gach &box)
 
 bool end_game(gach &box)
 {
-    int le_trai = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
-    int le_phai = le_trai+9;
-    for(int i=le_trai; i<=le_phai; i++)
+    for(int i=le_trai+1; i<=le_phai-1; i++)
     {
         if(board_game[4][i] == 1 || board_game[4][i] == 2 || board_game[4][i] == 3 || board_game[4][i] == 4 || board_game[4][i] == 5 || board_game[4][i] == 6 || board_game[4][i] == 7)
             return true;
     }
     return false;
 }
-//void nhap_nhay(SDL_Renderer *renderer,gach box, point A, point B, point C, point D)
-//{
-//    int time = 50;
-//    SDL_Rect rect;
-//    for(int i=0; i<time; i++)
-//    {
-//        rect.x = A.y*box.size;
-//        rect.y = A.x*box.size;
-//        rect.w = box.size;
-//        rect.h = box.size;
-//        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-//        SDL_RenderDrawRect(renderer, &rect);
-//        rect.x = B.y*box.size;
-//        rect.y = B.x*box.size;
-//        rect.w = box.size;
-//        rect.h = box.size;
-//        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-//        SDL_RenderDrawRect(renderer, &rect);
-//        rect.x = C.y*box.size;
-//        rect.y = C.x*box.size;
-//        rect.w = box.size;
-//        rect.h = box.size;
-//        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-//        SDL_RenderDrawRect(renderer, &rect);
-//        rect.x = D.y*box.size;
-//        rect.y = D.x*box.size;
-//        rect.w = box.size;
-//        rect.h = box.size;
-//        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-//        SDL_RenderDrawRect(renderer, &rect);
-//
-//        SDL_RenderPresent(renderer);
-//        box.render(renderer,A,B,C,D);
-//        SDL_RenderPresent(renderer);
-//    }
-//}
-void khoi_gach_tiep_theo(gach &box,SDL_Renderer *renderer,int hinh_truoc)
+
+void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)
 {
     SDL_Rect rect;
-    rect.x = 29*box.size;
+    rect.x = (le_phai+1)*box.size;
     rect.y = 4*box.size;
     rect.w = 5*box.size;
     rect.h = 6*box.size;
@@ -548,42 +513,25 @@ void khoi_gach_tiep_theo(gach &box,SDL_Renderer *renderer,int hinh_truoc)
         SDL_SetRenderDrawColor(renderer,196, 13, 241, 0);
     else
         SDL_SetRenderDrawColor(renderer,  247, 15, 3, 0);
-
-    SDL_RenderDrawLine(renderer,29*box.size,4*box.size,34*box.size,4*box.size);
-    SDL_RenderDrawLine(renderer,34*box.size,4*box.size,34*box.size,10*box.size);
-    SDL_RenderDrawLine(renderer,29*box.size,10*box.size,34*box.size,10*box.size);
-    SDL_RenderDrawLine(renderer,29*box.size,4*box.size,29*box.size,10*box.size);
     point a,b,c,d;
-    box.get_toa_do_Tam(7,31);
+    box.get_toa_do_Tam(7,le_phai+3);
     box.getType(hinh_truoc);
     getABCD(box,a,b,c,d);
     box.render(renderer,a,b,c,d,box.type);
-
 }
 
 void printScore(SDL_Renderer *renderer,int number)
 {
-    SDL_Rect rect = { 29*20, 20*11, 5*20, 6*20};
-    SDL_SetRenderDrawColor(renderer,0,0,0,0);
-    SDL_RenderFillRect(renderer,&rect);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,29*20,11*20,34*20,11*20);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,34*20,11*20,34*20,17*20);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,29*20,17*20,34*20,17*20);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawLine(renderer,29*20,11*20,29*20,17*20);
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 80);
     SDL_Color color = { 3, 87, 231 };
     SDL_Surface * surface = TTF_RenderText_Solid(font,
-                            "SCORE", color);
+                            "SCORE: ", color);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { 300*2, 120*2, 60, 20 };
+    SDL_Rect dstrect = { (le_phai+2)*20, 12*20, 60, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
     color = { 255, 0, 255 };
@@ -592,21 +540,17 @@ void printScore(SDL_Renderer *renderer,int number)
     surface = TTF_RenderText_Solid(font,diem, color);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    if(number == 0)
+    if(number < 10 )
     {
-        dstrect = { 313*2, 140*2, 10, 20 };
+        dstrect = { (le_phai+5)*20, 120*2, 10, 20 };
     }
-    else if(number < 100 )
+    else if(number < 100)
     {
-        dstrect = { 310*2, 140*2, 20, 20 };
-    }
-    else if(number < 1000)
-    {
-        dstrect = { 305*2, 140*2, 30, 20 };
+        dstrect = { (le_phai+5)*20, 120*2, 20, 20 };
     }
     else
     {
-        dstrect = { 305*2, 140*2, 40, 20 };
+        dstrect = { (le_phai+5)*20, 120*2, 30, 20 };
     }
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
@@ -614,71 +558,71 @@ void printScore(SDL_Renderer *renderer,int number)
 }
 void printEndgame(SDL_Renderer *renderer,int number)
 {
-    SDL_Rect rect = { 15*20, 11*20, 12*20, 6*20};
+    SDL_Rect rect = { le_trai*20, 11*20, 12*20, 6*20};
     SDL_SetRenderDrawColor(renderer,0,0,0,0);
     SDL_RenderFillRect(renderer,&rect);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,15*20+2,11*20+2,27*20-2,11*20+2);
+    SDL_RenderDrawLine(renderer,le_trai*20+2,11*20+2,(le_phai+1)*20-2,11*20+2);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,27*20-2,11*20+2,27*20-2,17*20-2);
+    SDL_RenderDrawLine(renderer,(le_phai+1)*20-2,11*20+2,(le_phai+1)*20-2,17*20-2);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,15*20+2,17*20-2,27*20-2,17*20-2);
+    SDL_RenderDrawLine(renderer,le_trai*20+2,17*20-2,(le_phai+1)*20-2,17*20-2);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,15*20+2,11*20+2,15*20+2,17*20-2);
+    SDL_RenderDrawLine(renderer,le_trai*20+2,11*20+2,le_trai*20+2,17*20-2);
 
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,16*20-10,12*20-10,26*20+10,12*20-10);
+    SDL_RenderDrawLine(renderer,(le_trai+1)*20-10,12*20-10,(le_trai+11)*20+10,12*20-10);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,26*20+10,12*20-10,26*20+10,16*20+10);
+    SDL_RenderDrawLine(renderer,(le_trai+11)*20+10,12*20-10,(le_trai+11)*20+10,16*20+10);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,16*20-10,16*20+10,26*20+10,16*20+10);
+    SDL_RenderDrawLine(renderer,(le_trai+1)*20-10,16*20+10,(le_trai+11)*20+10,16*20+10);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,16*20-10,12*20-10,16*20-10,16*20+10);
+    SDL_RenderDrawLine(renderer,(le_trai+1)*20-10,12*20-10,(le_trai+1)*20-10,16*20+10);
 
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 80);
     SDL_Color color = { 255, 0, 255 };
-    SDL_Surface * surface = TTF_RenderText_Solid(font," YOU LOSE!", color);
+    SDL_Surface * surface = TTF_RenderText_Solid(font," YOU LOSE !", color);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { 19*20, 120*2-10, 80, 19 };
+    SDL_Rect dstrect = { (le_trai+4)*20-1, 120*2-10, 80, 19 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
     surface = TTF_RenderText_Solid(font,"SCORE", color);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = {20*20, 130*2-8, 45, 19 };
+    dstrect = {(le_trai+5)*20-2, 130*2-8, 45, 19 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-
+    color = {255,0,0};
     string s = to_string(number);
     const char *diem = s.c_str();
     surface = TTF_RenderText_Solid(font,diem, color);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    if(number == 0)
+    if(number < 10 )
     {
-        dstrect = { 21*20-2, 140*2-6, 10, 19 };
+        dstrect = { (le_trai+6)*20-6, 140*2-6, 10, 19 };
     }
-    else if(number < 100 )
+    else if(number < 100)
     {
-        dstrect = { 21*20-8, 140*2-6, 20, 19 };
-    }
-    else if(number < 1000)
-    {
-        dstrect = { 21*20-13, 140*2-6, 30, 19 };
+        dstrect = { (le_trai+6)*20-13, 140*2-6, 20, 19 };
     }
     else
     {
-        dstrect = { 21*20-18, 140*2-6, 40, 19 };
+        dstrect = { (le_trai+6)*20-18, 140*2-6, 30, 19 };
     }
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-
-    surface = TTF_RenderText_Solid(font," PLAY AGAIN ? (Y/N)", color);
+    color = {39, 200, 0};
+    surface = TTF_RenderText_Solid(font," PLAY AGAIN", color);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = { 17*20+5, 150*2, 140, 19 };
+    dstrect = { (le_trai+2)*20+20, 150*2, 110, 19 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+    SDL_Rect rect1 = { (le_trai+2)*20+22, 150*2-2, 116, 23 };
+    SDL_SetRenderDrawColor(renderer,66, 103, 178,0);
+    SDL_RenderDrawRect(renderer,&rect1);
+
 }
 
