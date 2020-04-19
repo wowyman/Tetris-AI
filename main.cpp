@@ -3,6 +3,7 @@
 #include <SDL_ttf.h>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include "gach.h"
 #include "function.h"
 using namespace std;
@@ -192,6 +193,28 @@ void playGame()
                         printEndgame(renderer,score);
                         SDL_RenderPresent(renderer);
 
+                        fstream f1;
+                        f1.open("high_score.txt",ios::in);
+                        string data1;
+                        getline(f1, data1);
+                        f1.close();
+                        int b1 = score;
+                        int c1 = stoi(data1);
+
+                        if(c1 < b1)
+                        {
+                            f1.open("high_score.txt",ios::out);
+                            string s1 = to_string(b1);
+                            f1 << s1;
+                            f1.close();
+                        }
+                        else
+                        {
+                            f1.open("high_score.txt",ios::out);
+                            f1 << data1;
+                            f1.close();
+                        }
+
                         SDL_Event e1;
                         end = true;
                         while (!play_again)
@@ -280,7 +303,34 @@ int main(int argc, char* argv[])
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
     SDL_Rect dstrect = { 20*(le_trai+1)+55, SCREEN_HEIGHT/2 - 165, 90, 18 };
     SDL_RenderCopy(renderer1, texture, NULL, &dstrect);
+    //hien thi high score
+    fstream f;
+    f.open("high_score.txt",ios::in);
+    string data;
+    getline(f, data);
+    int num = stoi(data);
+    const char *highScore = data.c_str();
+    color ={255,255,255};
+    surface = TTF_RenderText_Solid(font,highScore, color);
+    texture = SDL_CreateTextureFromSurface(renderer1, surface);
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    if(num < 10 )
+    {
+        dstrect = { 20*(le_trai+1)+97-6,  SCREEN_HEIGHT/2 - 145, 10, 19 };
+    }
+    else if(num < 100)
+    {
+        dstrect = { 20*(le_trai+1)+97-13,  SCREEN_HEIGHT/2 - 145, 20, 19 };
+    }
+    else
+    {
+        dstrect = { 20*(le_trai+1)+97-18,  SCREEN_HEIGHT/2 - 145, 30, 19 };
+    }
+    SDL_RenderCopy(renderer1, texture, NULL, &dstrect);
 
+    //ghi lai score vao file
+    f << data;
+    f.close();
     //ve nut PLAY
     SDL_Rect filled_rect;
     filled_rect.x = 20*(le_trai+1)+60;
