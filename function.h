@@ -9,7 +9,7 @@ const int SCREEN_HEIGHT = cao*20;
 int le_trai = (dai - 10)/2 -1;
 int le_phai = le_trai + 11;
 int board_game[cao][dai];
-void init()
+void init()//khoi tao mang luu ban choi
 {
     for(int i=0; i<cao; i++)
     {
@@ -34,7 +34,7 @@ bool la_o_thanh_phan(gach &box,point E,point &A,point &B,point &C,point &D)//kie
     return check;
 }
 bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 la xuong,1 la sang trai,2 la sang phai
-{
+{//dung de kiem tra co di chuyen theo huong dc khong
     point a,b,c,d;
     bool check=true,check1=true,check2=true,check3=true,check4=true;
 
@@ -200,7 +200,7 @@ void xoay(SDL_Renderer *renderer,gach& box,int k,point& A,point& B,point& C,poin
     }
     else if(box.type == 6);
 }
-void getABCD(gach box,point &A,point &B,point &C,point &D)
+void getABCD(gach box,point &A,point &B,point &C,point &D)//khoi tao hinh dang khoi gach bang toa do 4 o gach
 {
 
     if(box.type == 1)//L
@@ -307,7 +307,7 @@ void turnRight(gach &box,point &A,point &B,point &C,point &D,int &b)
     }
     else;
 }
-void goDown(gach &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *renderer)
+void goDown(gach &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *renderer)//di xuong
 {
     if(IsMove(box,A,B,C,D,0))
     {
@@ -320,7 +320,7 @@ void goDown(gach &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *r
     }
     else;
 }
-void ve_le(SDL_Renderer *renderer)
+void ve_le(SDL_Renderer *renderer)//ve nen ban choi
 {
     SDL_Rect rect;
     rect.x = 0;
@@ -355,7 +355,7 @@ void ve_le(SDL_Renderer *renderer)
     SDL_SetRenderDrawColor(renderer,255,255,255,0);
     SDL_RenderDrawRect(renderer,&rect);
 }
-void ve_le2(SDL_Renderer *renderer)
+void ve_le2(SDL_Renderer *renderer)// tt ve le1
 {
     SDL_Rect rect5;
     rect5.x = (SCREEN_WIDTH-10*20)/2 ;
@@ -378,7 +378,7 @@ void ve_le2(SDL_Renderer *renderer)
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
 }
-bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)
+bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)// kiem tra neu xoay thi khoi gach co ra ngoai ban choi khong
 {
     xoay(renderer,box,1,A,B,C,D);
     int le_trai1 = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
@@ -391,7 +391,7 @@ bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)
     //cout<<checkA<<","<<checkB<<","<<checkC<<","<<checkD<<endl;
     return check;
 }
-void co_dinh_gach(point A,point B,point C,point D,gach &box)
+void co_dinh_gach(point A,point B,point C,point D,gach &box)//co dinh gach khi no dung lai
 {
 
     board_game[A.x][A.y] = box.type;
@@ -399,7 +399,7 @@ void co_dinh_gach(point A,point B,point C,point D,gach &box)
     board_game[C.x][C.y] = box.type;
     board_game[D.x][D.y] = box.type;
 }
-void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)
+void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)//ve gach da co dinh
 {
     for(int i=2; i<cao-1; i++)
     {
@@ -442,7 +442,7 @@ void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)
     }
 }
 
-void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem
+void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi khi nhung dong da full bien mat
 {
 
     int count[cao-1];
@@ -480,7 +480,7 @@ void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem
     ve_gach_da_co_dinh(renderer,box);
 }
 
-bool end_game(gach &box)
+bool end_game(gach &box)//kiem tra co phan nao cua khoi gach cham dinh chua
 {
     for(int i=le_trai+1; i<=le_phai-1; i++)
     {
@@ -490,7 +490,7 @@ bool end_game(gach &box)
     return false;
 }
 
-void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)
+void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)// hien thi khoi gach tiep theo xuat hien
 {
     SDL_Rect rect;
     rect.x = (le_phai+1)*box.size;
@@ -520,7 +520,7 @@ void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)
     box.render(renderer,a,b,c,d,box.type);
 }
 
-void printScore(SDL_Renderer *renderer,int number)
+void printScore(SDL_Renderer *renderer,int number)// hien thi diem
 {
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 80);
@@ -556,7 +556,7 @@ void printScore(SDL_Renderer *renderer,int number)
 
 
 }
-void printEndgame(SDL_Renderer *renderer,int number)
+void printEndgame(SDL_Renderer *renderer,int number)// hien thi cua so khi thua
 {
     SDL_Rect rect = { le_trai*20, 11*20, 12*20, 6*20};
     SDL_SetRenderDrawColor(renderer,0,0,0,0);
