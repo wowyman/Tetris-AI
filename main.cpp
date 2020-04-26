@@ -101,7 +101,8 @@ void playGame()
             hinh_truoc = rand() % 7 + 1;
             while(!quit)
             {
-                SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                //SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                 SDL_RenderClear(renderer);
                 ve_le(renderer);
                 box.render(renderer,A,B,C,D,box.type);
@@ -144,7 +145,8 @@ void playGame()
                             {
                                 goDown(box,A,B,C,D,a,renderer);
                             }
-                            SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                            //SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                             SDL_RenderClear(renderer);
                             co_dinh_gach(A,B,C,D,box);
                             ve_gach_da_co_dinh(renderer,box);
@@ -161,7 +163,8 @@ void playGame()
                             {
                                 k++;
                                 xoay(renderer,box,k,A,B,C,D);
-                                SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                                //SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                                 SDL_RenderClear(renderer);
                                 ve_le(renderer);
                                 ve_gach_da_co_dinh(renderer,box);
@@ -174,6 +177,27 @@ void playGame()
                             }
                             break;
                         }
+                        if (e.type == SDL_MOUSEBUTTONDOWN)
+                        {
+                            bool checkk = (e.button.x >= (le_phai+1)*20 && e.button.x <= (le_phai+1)*20+5*20 &&
+                                           e.button.y >= 17*20 && e.button.y <= 17*20+20*2);
+                            if(checkk)
+                            {
+                                SDL_Rect rect;
+                                rect.x = (le_phai+1)*20;
+                                rect.y = 17*20;
+                                rect.w = 5*20;
+                                rect.h = 2*20;
+                                SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                                SDL_RenderDrawRect(renderer,&rect);
+                                SDL_RenderPresent(renderer);
+                                quit = true;
+                                end = true;
+                                play_again = true;
+                                break;
+                            }
+                        
+                        }
                     }
                 }
 
@@ -183,7 +207,8 @@ void playGame()
 
                     if(end_game(box))
                     {
-                        SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                        //SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                         SDL_RenderClear(renderer);
                         ve_le(renderer);
                         ve_gach_da_co_dinh(renderer,box);
