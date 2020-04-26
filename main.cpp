@@ -72,11 +72,14 @@ void playGame()
     while(true)
     {
         play_again = false;
+
         gach box;
         int time_delay;
         point A,B,C,D;
         int a,b;//toa do tam
         bool quit = false,end = false;
+        dark = false;
+        count_dark = -1;
         a=2;
         b=dai/2-1;
         box.get_toa_do_Tam(a,b);
@@ -96,13 +99,16 @@ void playGame()
             box.get_toa_do_Tam(a,b);
             getABCD(box,A,B,C,D);
             lui_dong(renderer,box);
-            SDL_Delay(150);
+
             srand(time(0));
             hinh_truoc = rand() % 7 + 1;
             while(!quit)
             {
-                //SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+                if(dark)
+                    SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                else
+                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+
                 SDL_RenderClear(renderer);
                 ve_le(renderer);
                 box.render(renderer,A,B,C,D,box.type);
@@ -145,8 +151,11 @@ void playGame()
                             {
                                 goDown(box,A,B,C,D,a,renderer);
                             }
-                            //SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
-                            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+                            if(dark)
+                                SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                            else
+                                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+
                             SDL_RenderClear(renderer);
                             co_dinh_gach(A,B,C,D,box);
                             ve_gach_da_co_dinh(renderer,box);
@@ -159,12 +168,14 @@ void playGame()
                             break;
                         case SDLK_w:
                             SDL_Delay(time_delay/7);
-                            if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D))
+                            if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D,k))
                             {
                                 k++;
                                 xoay(renderer,box,k,A,B,C,D);
-                                //SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
-                                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+                                if(dark)
+                                    SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                                else
+                                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                                 SDL_RenderClear(renderer);
                                 ve_le(renderer);
                                 ve_gach_da_co_dinh(renderer,box);
@@ -177,29 +188,51 @@ void playGame()
                             }
                             break;
                         }
-                        if (e.type == SDL_MOUSEBUTTONDOWN)
+                    }
+                    if (e.type == SDL_MOUSEBUTTONDOWN)
+                    {
+
+                        bool checkk = (e.button.x >= (le_phai+1)*20 && e.button.x <= (le_phai+1)*20+5*20 &&
+                                       e.button.y >= 17*20 && e.button.y <= 17*20+20*2);
+                        if(checkk)
                         {
-                            bool checkk = (e.button.x >= (le_phai+1)*20 && e.button.x <= (le_phai+1)*20+5*20 &&
-                                           e.button.y >= 17*20 && e.button.y <= 17*20+20*2);
-                            if(checkk)
-                            {
-                                SDL_Rect rect;
-                                rect.x = (le_phai+1)*20;
-                                rect.y = 17*20;
-                                rect.w = 5*20;
-                                rect.h = 2*20;
-                                SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
-                                SDL_RenderDrawRect(renderer,&rect);
-                                SDL_RenderPresent(renderer);
-                                quit = true;
-                                end = true;
-                                play_again = true;
-                                break;
-                            }
-                        
+                            SDL_Rect rect;
+                            rect.x = (le_phai+1)*20;
+                            rect.y = 17*20;
+                            rect.w = 5*20;
+                            rect.h = 2*20;
+                            SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                            SDL_RenderDrawRect(renderer,&rect);
+                            SDL_RenderPresent(renderer);
+
+                            quit = true;
+                            end = true;
+                            play_again = true;
+                            break;
                         }
+                        checkk = (e.button.x >= (le_phai+1)*20 && e.button.x <= (le_phai+1)*20+5*20 &&
+                                  e.button.y >= 14*20 && e.button.y <= 14*20+20*2);
+                        if(checkk)
+                        {
+                            count_dark++;
+                            SDL_Rect rect;
+                            rect.x = (le_phai+1)*20;
+                            rect.y = 14*20;
+                            rect.w = 5*20;
+                            rect.h = 2*20;
+                            SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                            SDL_RenderDrawRect(renderer,&rect);
+                            SDL_RenderPresent(renderer);
+                            if(count_dark %2 == 0)
+                                dark = true;
+                            else
+                                dark = false;
+
+                        }
+
                     }
                 }
+
 
                 if(!IsMove(box,A,B,C,D,0))
                 {
@@ -207,8 +240,10 @@ void playGame()
 
                     if(end_game(box))
                     {
-                        //SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
-                        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+                        if(dark)
+                            SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                        else
+                            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                         SDL_RenderClear(renderer);
                         ve_le(renderer);
                         ve_gach_da_co_dinh(renderer,box);
@@ -260,6 +295,15 @@ void playGame()
                                                e1.button.y >= 150*2-2 && e1.button.y <= 150*2-2 + 23);
                                 if(checkk)
                                 {
+                                    SDL_Rect rect;
+                                    rect.x = (le_trai+2)*20+22;
+                                    rect.y = 150*2-2;
+                                    rect.w = 116;
+                                    rect.h = 23;
+                                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+                                    SDL_RenderDrawRect(renderer,&rect);
+                                    SDL_RenderPresent(renderer);
+                                    SDL_Delay(50);
                                     play_again = true;
                                     break;
                                 }
@@ -335,7 +379,7 @@ int main(int argc, char* argv[])
     getline(f, data);
     int num = stoi(data);
     const char *highScore = data.c_str();
-    color ={255,255,255};
+    color = {255,255,255};
     surface = TTF_RenderText_Solid(font,highScore, color);
     texture = SDL_CreateTextureFromSurface(renderer1, surface);
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
@@ -397,6 +441,15 @@ int main(int argc, char* argv[])
                            e1.button.y >= SCREEN_HEIGHT/2 - 40 && e1.button.y <= SCREEN_HEIGHT/2);
             if(checkk)
             {
+                SDL_Rect rect;
+                rect.x = 20*(le_trai+1)+60;
+                rect.y = SCREEN_HEIGHT/2 - 40;
+                rect.w = 80;
+                rect.h = 40;
+                SDL_SetRenderDrawColor(renderer1, 0, 0, 0, 0);
+                SDL_RenderDrawRect(renderer1,&rect);
+                SDL_RenderPresent(renderer1);
+                SDL_Delay(50);
                 play = true;
                 SDL_RenderClear(renderer1);
                 break;

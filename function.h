@@ -9,8 +9,14 @@ const int SCREEN_HEIGHT = cao*20;
 int le_trai = (dai - 10)/2 -1;
 int le_phai = le_trai + 11;
 int board_game[cao][dai];
-void init()//khoi tao mang luu ban choi
+int count_dark = -1;
+
+bool dark = false;
+
+void init()
 {
+
+
     for(int i=0; i<cao; i++)
     {
         for(int j=0; j<dai; j++)
@@ -34,7 +40,7 @@ bool la_o_thanh_phan(gach &box,point E,point &A,point &B,point &C,point &D)//kie
     return check;
 }
 bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 la xuong,1 la sang trai,2 la sang phai
-{//dung de kiem tra co di chuyen theo huong dc khong
+{
     point a,b,c,d;
     bool check=true,check1=true,check2=true,check3=true,check4=true;
 
@@ -200,7 +206,7 @@ void xoay(SDL_Renderer *renderer,gach& box,int k,point& A,point& B,point& C,poin
     }
     else if(box.type == 6);
 }
-void getABCD(gach box,point &A,point &B,point &C,point &D)//khoi tao hinh dang khoi gach bang toa do 4 o gach
+void getABCD(gach box,point &A,point &B,point &C,point &D)
 {
 
     if(box.type == 1)//L
@@ -307,7 +313,7 @@ void turnRight(gach &box,point &A,point &B,point &C,point &D,int &b)
     }
     else;
 }
-void goDown(gach &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *renderer)//di xuong
+void goDown(gach &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *renderer)
 {
     if(IsMove(box,A,B,C,D,0))
     {
@@ -320,7 +326,7 @@ void goDown(gach &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *r
     }
     else;
 }
-void ve_le(SDL_Renderer *renderer)//ve nen ban choi
+void ve_le(SDL_Renderer *renderer)
 {
     SDL_Rect rect;
     rect.x = 0;
@@ -330,21 +336,21 @@ void ve_le(SDL_Renderer *renderer)//ve nen ban choi
     SDL_SetRenderDrawColor(renderer, 191,201,217,0);
     SDL_RenderFillRect(renderer, &rect);
 
-    SDL_Rect rect2;
-    rect2.x = SCREEN_WIDTH-(SCREEN_WIDTH-10*20)/2+1;
-    rect2.y = 0;
-    rect2.w = (SCREEN_WIDTH-10*20)/2;
-    rect2.h = SCREEN_HEIGHT;
-    SDL_SetRenderDrawColor(renderer, 191,201,217,0);
-    SDL_RenderFillRect(renderer, &rect2);
 
-    SDL_Rect rect3;
-    rect3.x = (SCREEN_WIDTH-10*20)/2 ;
-    rect3.y = SCREEN_HEIGHT-20+1;
-    rect3.w = 10*20 + 1;
-    rect3.h = 20;
+    rect.x = SCREEN_WIDTH-(SCREEN_WIDTH-10*20)/2+1;
+    rect.y = 0;
+    rect.w = (SCREEN_WIDTH-10*20)/2;
+    rect.h = SCREEN_HEIGHT;
+    SDL_SetRenderDrawColor(renderer, 191,201,217,0);
+    SDL_RenderFillRect(renderer, &rect);
+
+
+    rect.x = (SCREEN_WIDTH-10*20)/2 ;
+    rect.y = SCREEN_HEIGHT-20+1;
+    rect.w = 10*20 + 1;
+    rect.h = 20;
     SDL_SetRenderDrawColor(renderer,191,201,217,0);
-    SDL_RenderFillRect(renderer, &rect3);
+    SDL_RenderFillRect(renderer, &rect);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
     //SDL_RenderDrawLine(renderer,16*box.size,34*box.size+1,26*box.size-1,34*box.size+1);
@@ -355,15 +361,15 @@ void ve_le(SDL_Renderer *renderer)//ve nen ban choi
     SDL_SetRenderDrawColor(renderer,255,255,255,0);
     SDL_RenderDrawRect(renderer,&rect);
 }
-void ve_le2(SDL_Renderer *renderer)// tt ve le1
+void ve_le2(SDL_Renderer *renderer)
 {
-    SDL_Rect rect5;
-    rect5.x = (SCREEN_WIDTH-10*20)/2 ;
-    rect5.y = 0;
-    rect5.w = 10*20+1;
-    rect5.h = 4*20;
+    SDL_Rect rect;
+    rect.x = (SCREEN_WIDTH-10*20)/2 ;
+    rect.y = 0;
+    rect.w = 10*20+1;
+    rect.h = 4*20;
     SDL_SetRenderDrawColor(renderer, 191,201,217,0);
-    SDL_RenderFillRect(renderer, &rect5);
+    SDL_RenderFillRect(renderer, &rect);
 
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 500);
@@ -377,10 +383,12 @@ void ve_le2(SDL_Renderer *renderer)// tt ve le1
     SDL_Rect dstrect = { (le_trai-1)*20, 0, 14*20, 3*20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
+
+
 }
-bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)// kiem tra neu xoay thi khoi gach co ra ngoai ban choi khong
+bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D,int k)
 {
-    xoay(renderer,box,1,A,B,C,D);
+    xoay(renderer,box,k,A,B,C,D);
     int le_trai1 = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
     int le_phai1 = le_trai1+9;
     bool checkA = (A.y <= le_phai1 && A.y >= le_trai1 && board_game[A.x][A.y] == 0);
@@ -391,7 +399,7 @@ bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)// 
     //cout<<checkA<<","<<checkB<<","<<checkC<<","<<checkD<<endl;
     return check;
 }
-void co_dinh_gach(point A,point B,point C,point D,gach &box)//co dinh gach khi no dung lai
+void co_dinh_gach(point A,point B,point C,point D,gach &box)
 {
 
     board_game[A.x][A.y] = box.type;
@@ -399,11 +407,13 @@ void co_dinh_gach(point A,point B,point C,point D,gach &box)//co dinh gach khi n
     board_game[C.x][C.y] = box.type;
     board_game[D.x][D.y] = box.type;
 }
-void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)//ve gach da co dinh
+
+void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)
 {
-    for(int i=2; i<cao-1; i++)
+    for(int j=le_trai+1; j<=le_phai-1; j++)
     {
-        for(int j=le_trai+1; j<=le_phai-1; j++)
+
+        for(int i=2; i<cao-1; i++)
         {
             if(board_game[i][j] != 0)
             {
@@ -430,21 +440,17 @@ void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)//ve gach da co dinh
 
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                 SDL_RenderDrawLine(renderer,j*box.size,i*box.size,j*box.size+box.size,i*box.size);
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                 SDL_RenderDrawLine(renderer,j*box.size+box.size,i*box.size,j*box.size+box.size,i*box.size+box.size);
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                 SDL_RenderDrawLine(renderer,j*box.size+box.size,i*box.size+box.size,j*box.size,i*box.size+box.size);
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                 SDL_RenderDrawLine(renderer,j*box.size,i*box.size+box.size,j*box.size,i*box.size);
             }
-
         }
     }
 }
 
-void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi khi nhung dong da full bien mat
+void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem
 {
-
+    int old_score = score;
     int count[cao-1];
     for(int i=0; i<cao-1; i++)
     {
@@ -454,7 +460,7 @@ void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi kh
     {
         for(int j=4; j<cao-1; j++)
         {
-            if(board_game[j][i] ==1 || board_game[j][i] ==2 || board_game[j][i] ==3 || board_game[j][i] ==4 || board_game[j][i] ==5 || board_game[j][i] ==6 || board_game[j][i] ==7)
+            if(board_game[j][i] >=1 && board_game[j][i] <=7 )
                 count[j]++;
         }
     }
@@ -477,10 +483,11 @@ void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi kh
         else i--;
     }
     //cout<<score<<endl;
+    if(score != old_score) SDL_Delay(150);
     ve_gach_da_co_dinh(renderer,box);
 }
 
-bool end_game(gach &box)//kiem tra co phan nao cua khoi gach cham dinh chua
+bool end_game(gach &box)
 {
     for(int i=le_trai+1; i<=le_phai-1; i++)
     {
@@ -490,14 +497,14 @@ bool end_game(gach &box)//kiem tra co phan nao cua khoi gach cham dinh chua
     return false;
 }
 
-void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)// hien thi khoi gach tiep theo xuat hien
+void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)
 {
     SDL_Rect rect;
     rect.x = (le_phai+1)*box.size;
     rect.y = 4*box.size;
     rect.w = 5*box.size;
     rect.h = 6*box.size;
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer,&rect);
     if(box.type == 1)
         SDL_SetRenderDrawColor(renderer, 39, 200, 0, 0);
@@ -520,8 +527,15 @@ void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)// hien 
     box.render(renderer,a,b,c,d,box.type);
 }
 
-void printScore(SDL_Renderer *renderer,int number)// hien thi diem
+void printScore(SDL_Renderer *renderer,int number)
 {
+    SDL_Rect rect;
+    rect.x = (le_phai+1)*20;
+    rect.y = 11*20;
+    rect.w = 5*20;
+    rect.h = 2*20;
+    SDL_SetRenderDrawColor(renderer,255,255,255,0);
+    SDL_RenderFillRect(renderer,&rect);
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 80);
     SDL_Color color = { 3, 87, 231 };
@@ -531,7 +545,7 @@ void printScore(SDL_Renderer *renderer,int number)// hien thi diem
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { (le_phai+2)*20, 12*20, 60, 20 };
+    SDL_Rect dstrect = { (le_phai+2)*20-10, 12*20-10, 60, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
     color = { 255, 0, 255 };
@@ -542,41 +556,64 @@ void printScore(SDL_Renderer *renderer,int number)// hien thi diem
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
     if(number < 10 )
     {
-        dstrect = { (le_phai+5)*20, 120*2, 10, 20 };
+        dstrect = { (le_phai+5)*20-10, 120*2-10, 10, 20 };
     }
     else if(number < 100)
     {
-        dstrect = { (le_phai+5)*20, 120*2, 20, 20 };
+        dstrect = { (le_phai+5)*20-10, 120*2-10, 20, 20 };
     }
     else
     {
-        dstrect = { (le_phai+5)*20, 120*2, 30, 20 };
+        dstrect = { (le_phai+5)*20-10, 120*2-10, 30, 20 };
     }
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+    //hien thi o reset game
+    rect.x = (le_phai+1)*20;
+    rect.y = 14*20;
+    rect.w = 5*20;
+    rect.h = 2*20;
+    SDL_SetRenderDrawColor(renderer,255,255,255,0);
+    SDL_RenderFillRect(renderer,&rect);
+    color = { 3, 87, 231 };
+    surface = TTF_RenderText_Solid(font,
+                                   "DARK", color);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    texW = 0;
+    texH = 0;
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    dstrect = { (le_phai+2)*20+5, 15*20-10, 50, 20 };
+    SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
+    rect.x = (le_phai+1)*20;
+    rect.y = 17*20;
+    rect.w = 5*20;
+    rect.h = 2*20;
+    SDL_SetRenderDrawColor(renderer,255,255,255,0);
+    SDL_RenderFillRect(renderer,&rect);
+    color = { 3, 87, 231 };
+    surface = TTF_RenderText_Solid(font,
+                                   "RESET", color);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    texW = 0;
+    texH = 0;
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    dstrect = { (le_phai+2)*20+5, 18*20-10, 50, 20 };
+    SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
 }
-void printEndgame(SDL_Renderer *renderer,int number)// hien thi cua so khi thua
+void printEndgame(SDL_Renderer *renderer,int number)
 {
     SDL_Rect rect = { le_trai*20, 11*20, 12*20, 6*20};
     SDL_SetRenderDrawColor(renderer,0,0,0,0);
     SDL_RenderFillRect(renderer,&rect);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
     SDL_RenderDrawLine(renderer,le_trai*20+2,11*20+2,(le_phai+1)*20-2,11*20+2);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
     SDL_RenderDrawLine(renderer,(le_phai+1)*20-2,11*20+2,(le_phai+1)*20-2,17*20-2);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
     SDL_RenderDrawLine(renderer,le_trai*20+2,17*20-2,(le_phai+1)*20-2,17*20-2);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
     SDL_RenderDrawLine(renderer,le_trai*20+2,11*20+2,le_trai*20+2,17*20-2);
-
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
     SDL_RenderDrawLine(renderer,(le_trai+1)*20-10,12*20-10,(le_trai+11)*20+10,12*20-10);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
     SDL_RenderDrawLine(renderer,(le_trai+11)*20+10,12*20-10,(le_trai+11)*20+10,16*20+10);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
     SDL_RenderDrawLine(renderer,(le_trai+1)*20-10,16*20+10,(le_trai+11)*20+10,16*20+10);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
     SDL_RenderDrawLine(renderer,(le_trai+1)*20-10,12*20-10,(le_trai+1)*20-10,16*20+10);
 
     TTF_Init();
