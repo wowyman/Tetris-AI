@@ -69,17 +69,19 @@ void playGame()
     SDL_Window* window;
     SDL_Renderer* renderer;
     initSDL(window, renderer);
+
+    dark = false;
+    count_dark = -1;
     while(true)
     {
         play_again = false;
-
+        bool quit = false,end = false;
         gach box;
         int time_delay;
         point A,B,C,D;
         int a,b;//toa do tam
-        bool quit = false,end = false;
-        dark = false;
-        count_dark = -1;
+
+
         a=2;
         b=dai/2-1;
         box.get_toa_do_Tam(a,b);
@@ -168,7 +170,7 @@ void playGame()
                             break;
                         case SDLK_w:
                             SDL_Delay(time_delay/7);
-                            if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D,k))
+                            if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D))
                             {
                                 k++;
                                 xoay(renderer,box,k,A,B,C,D);
@@ -354,6 +356,7 @@ void drawStart(SDL_Renderer *renderer1)
 }
 int main(int argc, char* argv[])
 {
+
     cout<<"click Play to start."<<endl;
     SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
     SDL_Window* window1;
@@ -463,5 +466,6 @@ int main(int argc, char* argv[])
         quitSDL(window1, renderer1);
         playGame();
     }
+
     return 0;
 }
