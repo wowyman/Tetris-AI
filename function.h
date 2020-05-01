@@ -447,7 +447,7 @@ void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)//ve gach da co dinh
 
 void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi khi nhung dong da full bien mat
 {
-
+    int old_score = score;
     int count[cao-1];
     for(int i=0; i<cao-1; i++)
     {
