@@ -480,6 +480,7 @@ void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi kh
         else i--;
     }
     //cout<<score<<endl;
+    if(score != old_score) SDL_Delay(150);
     ve_gach_da_co_dinh(renderer,box);
 }
 
