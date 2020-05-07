@@ -37,7 +37,8 @@ bool la_o_thanh_phan(gach &box,point E,point &A,point &B,point &C,point &D)//kie
     return check;
 }
 bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 la xuong,1 la sang trai,2 la sang phai
-{//dung de kiem tra co di chuyen theo huong dc khong
+{
+    //dung de kiem tra co di chuyen theo huong dc khong
     point a,b,c,d;
     bool check=true,check1=true,check2=true,check3=true,check4=true;
 
@@ -144,27 +145,10 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
 }
 void xoay(SDL_Renderer *renderer,gach& box,int k,point& A,point& B,point& C,point& D)
 {
-    if(box.type == 1 || box.type == 2 || box.type == 5 )
+    if(k == 0);
+    else
     {
-        int Xtemp=A.x;
-        A.x=-A.y+box.tam.x+box.tam.y;
-        A.y=Xtemp-box.tam.x+box.tam.y;
-
-        Xtemp=B.x;
-        B.x=-B.y+box.tam.x+box.tam.y;
-        B.y=Xtemp-box.tam.x+box.tam.y;
-
-        Xtemp=C.x;
-        C.x=-C.y+box.tam.x+box.tam.y;
-        C.y=Xtemp-box.tam.x+box.tam.y;
-
-        Xtemp=D.x;
-        D.x=-D.y+box.tam.x+box.tam.y;
-        D.y=Xtemp-box.tam.x+box.tam.y;
-    }
-    else if(box.type == 3 || box.type == 4 || box.type == 7)
-    {
-        if(k % 2 == 1)
+        if(box.type == 1 || box.type == 2 || box.type == 5 )
         {
             int Xtemp=A.x;
             A.x=-A.y+box.tam.x+box.tam.y;
@@ -182,30 +166,50 @@ void xoay(SDL_Renderer *renderer,gach& box,int k,point& A,point& B,point& C,poin
             D.x=-D.y+box.tam.x+box.tam.y;
             D.y=Xtemp-box.tam.x+box.tam.y;
         }
-        else if(k % 2 == 0 && k >=2 )
+        else if(box.type == 3 || box.type == 4 || box.type == 7)
         {
-            int Xtemp=A.x;
-            A.x=A.y+box.tam.x-box.tam.y;
-            A.y=-Xtemp+box.tam.x+box.tam.y;
+            if(k % 2 == 1)
+            {
+                int Xtemp=A.x;
+                A.x=-A.y+box.tam.x+box.tam.y;
+                A.y=Xtemp-box.tam.x+box.tam.y;
 
-            Xtemp=B.x;
-            B.x=B.y+box.tam.x-box.tam.y;
-            B.y=-Xtemp+box.tam.x+box.tam.y;
+                Xtemp=B.x;
+                B.x=-B.y+box.tam.x+box.tam.y;
+                B.y=Xtemp-box.tam.x+box.tam.y;
 
-            Xtemp=C.x;
-            C.x=C.y+box.tam.x-box.tam.y;
-            C.y=-Xtemp+box.tam.x+box.tam.y;
+                Xtemp=C.x;
+                C.x=-C.y+box.tam.x+box.tam.y;
+                C.y=Xtemp-box.tam.x+box.tam.y;
 
-            Xtemp=D.x;
-            D.x=D.y+box.tam.x-box.tam.y;
-            D.y=-Xtemp+box.tam.x+box.tam.y;
+                Xtemp=D.x;
+                D.x=-D.y+box.tam.x+box.tam.y;
+                D.y=Xtemp-box.tam.x+box.tam.y;
+            }
+            else if(k % 2 == 0 && k >=2 )
+            {
+                int Xtemp=A.x;
+                A.x=A.y+box.tam.x-box.tam.y;
+                A.y=-Xtemp+box.tam.x+box.tam.y;
+
+                Xtemp=B.x;
+                B.x=B.y+box.tam.x-box.tam.y;
+                B.y=-Xtemp+box.tam.x+box.tam.y;
+
+                Xtemp=C.x;
+                C.x=C.y+box.tam.x-box.tam.y;
+                C.y=-Xtemp+box.tam.x+box.tam.y;
+
+                Xtemp=D.x;
+                D.x=D.y+box.tam.x-box.tam.y;
+                D.y=-Xtemp+box.tam.x+box.tam.y;
+            }
         }
+        else if(box.type == 6);
     }
-    else if(box.type == 6);
 }
 void getABCD(gach box,point &A,point &B,point &C,point &D)//khoi tao hinh dang khoi gach bang toa do 4 o gach
 {
-
     if(box.type == 1)//L
     {
         A.x = box.tam.x - 1;
@@ -447,7 +451,7 @@ void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)//ve gach da co dinh
 
 void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi khi nhung dong da full bien mat
 {
-    int old_score = score;
+    //int old_score = score;
     int count[cao-1];
     for(int i=0; i<cao-1; i++)
     {
@@ -480,7 +484,7 @@ void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi kh
         else i--;
     }
     //cout<<score<<endl;
-    if(score != old_score) SDL_Delay(150);
+    //if(score != old_score) SDL_Delay(120);
     ve_gach_da_co_dinh(renderer,box);
 }
 
@@ -595,6 +599,22 @@ void printScore(SDL_Renderer *renderer,int number)
     texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
     dstrect = { (le_phai+2)*20+5, 18*20-10, 50, 20 };
+    SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+
+    rect.x = (le_phai+1)*20;
+    rect.y = 20*20;
+    rect.w = 5*20;
+    rect.h = 2*20;
+    SDL_SetRenderDrawColor(renderer,255,255,255,0);
+    SDL_RenderFillRect(renderer,&rect);
+    color = { 3, 87, 231 };
+    surface = TTF_RenderText_Solid(font,
+                                   "RUN AI", color);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    texW = 0;
+    texH = 0;
+    SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+    dstrect = { (le_phai+2)*20+5, 21*20-10, 50, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
 }
