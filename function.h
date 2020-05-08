@@ -2,47 +2,47 @@
 using namespace std;
 
 int k=0,score = 0;
-const int cao = 29;
-const int dai = 34;
+const int height = 29;
+const int width = 34;
 int count_dark = -1;
 
 bool dark = false;
-const int SCREEN_WIDTH = dai*20;
-const int SCREEN_HEIGHT = cao*20;
-int le_trai = (dai - 10)/2 -1;
-int le_phai = le_trai + 11;
-int board_game[cao][dai];
+const int SCREEN_WIDTH = width*20;
+const int SCREEN_HEIGHT = height*20;
+int left_margin = (width - 10)/2 -1;
+int right_margin = left_margin + 11;
+int board_game[height][width];
 void init()//khoi tao mang luu ban choi
 {
-    for(int i=0; i<cao; i++)
+    for(int i=0; i<height; i++)
     {
-        for(int j=0; j<dai; j++)
+        for(int j=0; j<width; j++)
         {
             board_game[i][j] = -1;
         }
     }
-    for(int i=0; i<cao-1; i++)
+    for(int i=0; i<height-1; i++)
     {
-        for(int j= le_trai+1; j<=le_phai-1; j++)
+        for(int j= left_margin+1; j<=right_margin-1; j++)
         {
             board_game[i][j] = 0;
         }
     }
 
 }
-bool la_o_thanh_phan(gach &box,point E,point &A,point &B,point &C,point &D)//kiem tra o nhan vao co la 1 trong 4 o cua khoi gach khong, neu co tra ve true ,khong tra ve false
+bool Is_part_of_brick(brick &box,point E,point &A,point &B,point &C,point &D)//kiem tra o nhan vao co la 1 trong 4 o cua khoi gach khong, neu co tra ve true ,khong tra ve false
 {
     bool check = ((E.x == A.x && E.y == A.y) || (E.x == B.x && E.y == B.y )|| (E.x == C.x && E.y == C.y) || (E.x == D.x && E.y == D.y) );
 
     return check;
 }
-bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 la xuong,1 la sang trai,2 la sang phai
+bool IsMove(brick &box,point &A,point &B,point &C,point &D,int direction)//direction: 0 la xuong,1 la sang trai,2 la sang phai
 {
     //dung de kiem tra co di chuyen theo huong dc khong
     point a,b,c,d;
     bool check=true,check1=true,check2=true,check3=true,check4=true;
 
-    if(huong == 0)
+    if(direction == 0)
     {
         a.x = A.x + 1;
         a.y = A.y;
@@ -53,7 +53,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
         d.x = D.x + 1;
         d.y = D.y;
     }
-    else if(huong == 1)
+    else if(direction == 1)
     {
         a.x = A.x;
         a.y = A.y - 1;
@@ -64,7 +64,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
         d.x = D.x;
         d.y = D.y - 1;
     }
-    else if(huong == 2)
+    else if(direction == 2)
     {
         a.x = A.x;
         a.y = A.y + 1;
@@ -76,7 +76,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
         d.y = D.y + 1;
     }
 
-    if(la_o_thanh_phan(box,a,A,B,C,D)== true)
+    if(Is_part_of_brick(box,a,A,B,C,D)== true)
     {
         check1=true;
     }
@@ -91,7 +91,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
             check1 = true;
         }
     }
-    if(la_o_thanh_phan(box,b,A,B,C,D)== true)
+    if(Is_part_of_brick(box,b,A,B,C,D)== true)
     {
 
         check2=true;
@@ -109,7 +109,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
         }
 
     }
-    if(la_o_thanh_phan(box,c,A,B,C,D)== true)
+    if(Is_part_of_brick(box,c,A,B,C,D)== true)
     {
         check3=true;
     }
@@ -125,7 +125,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
             check3 = true;
         }
     }
-    if(la_o_thanh_phan(box,d,A,B,C,D)== true)
+    if(Is_part_of_brick(box,d,A,B,C,D)== true)
     {
         check4=true;
     }
@@ -143,7 +143,7 @@ bool IsMove(gach &box,point &A,point &B,point &C,point &D,int huong)//huong: 0 l
     check = (check1 && check2 && check3 && check4);
     return check;
 }
-void xoay(SDL_Renderer *renderer,gach& box,int k,point& A,point& B,point& C,point& D)
+void rotary(SDL_Renderer *renderer,brick& box,int k,point& A,point& B,point& C,point& D)
 {
     if(k == 0);
     else
@@ -151,149 +151,149 @@ void xoay(SDL_Renderer *renderer,gach& box,int k,point& A,point& B,point& C,poin
         if(box.type == 1 || box.type == 2 || box.type == 5 )
         {
             int Xtemp=A.x;
-            A.x=-A.y+box.tam.x+box.tam.y;
-            A.y=Xtemp-box.tam.x+box.tam.y;
+            A.x=-A.y+box.center.x+box.center.y;
+            A.y=Xtemp-box.center.x+box.center.y;
 
             Xtemp=B.x;
-            B.x=-B.y+box.tam.x+box.tam.y;
-            B.y=Xtemp-box.tam.x+box.tam.y;
+            B.x=-B.y+box.center.x+box.center.y;
+            B.y=Xtemp-box.center.x+box.center.y;
 
             Xtemp=C.x;
-            C.x=-C.y+box.tam.x+box.tam.y;
-            C.y=Xtemp-box.tam.x+box.tam.y;
+            C.x=-C.y+box.center.x+box.center.y;
+            C.y=Xtemp-box.center.x+box.center.y;
 
             Xtemp=D.x;
-            D.x=-D.y+box.tam.x+box.tam.y;
-            D.y=Xtemp-box.tam.x+box.tam.y;
+            D.x=-D.y+box.center.x+box.center.y;
+            D.y=Xtemp-box.center.x+box.center.y;
         }
         else if(box.type == 3 || box.type == 4 || box.type == 7)
         {
             if(k % 2 == 1)
             {
                 int Xtemp=A.x;
-                A.x=-A.y+box.tam.x+box.tam.y;
-                A.y=Xtemp-box.tam.x+box.tam.y;
+                A.x=-A.y+box.center.x+box.center.y;
+                A.y=Xtemp-box.center.x+box.center.y;
 
                 Xtemp=B.x;
-                B.x=-B.y+box.tam.x+box.tam.y;
-                B.y=Xtemp-box.tam.x+box.tam.y;
+                B.x=-B.y+box.center.x+box.center.y;
+                B.y=Xtemp-box.center.x+box.center.y;
 
                 Xtemp=C.x;
-                C.x=-C.y+box.tam.x+box.tam.y;
-                C.y=Xtemp-box.tam.x+box.tam.y;
+                C.x=-C.y+box.center.x+box.center.y;
+                C.y=Xtemp-box.center.x+box.center.y;
 
                 Xtemp=D.x;
-                D.x=-D.y+box.tam.x+box.tam.y;
-                D.y=Xtemp-box.tam.x+box.tam.y;
+                D.x=-D.y+box.center.x+box.center.y;
+                D.y=Xtemp-box.center.x+box.center.y;
             }
             else if(k % 2 == 0 && k >=2 )
             {
                 int Xtemp=A.x;
-                A.x=A.y+box.tam.x-box.tam.y;
-                A.y=-Xtemp+box.tam.x+box.tam.y;
+                A.x=A.y+box.center.x-box.center.y;
+                A.y=-Xtemp+box.center.x+box.center.y;
 
                 Xtemp=B.x;
-                B.x=B.y+box.tam.x-box.tam.y;
-                B.y=-Xtemp+box.tam.x+box.tam.y;
+                B.x=B.y+box.center.x-box.center.y;
+                B.y=-Xtemp+box.center.x+box.center.y;
 
                 Xtemp=C.x;
-                C.x=C.y+box.tam.x-box.tam.y;
-                C.y=-Xtemp+box.tam.x+box.tam.y;
+                C.x=C.y+box.center.x-box.center.y;
+                C.y=-Xtemp+box.center.x+box.center.y;
 
                 Xtemp=D.x;
-                D.x=D.y+box.tam.x-box.tam.y;
-                D.y=-Xtemp+box.tam.x+box.tam.y;
+                D.x=D.y+box.center.x-box.center.y;
+                D.y=-Xtemp+box.center.x+box.center.y;
             }
         }
         else if(box.type == 6);
     }
 }
-void getABCD(gach box,point &A,point &B,point &C,point &D)//khoi tao hinh dang khoi gach bang toa do 4 o gach
+void shape_of_you(brick box,point &A,point &B,point &C,point &D)//khoi tao hinh dang khoi gach bang toa do 4 o gach
 {
     if(box.type == 1)//L
     {
-        A.x = box.tam.x - 1;
-        A.y = box.tam.y;
-        B.x = box.tam.x;
-        B.y = box.tam.y;
-        C.x = box.tam.x + 1;
-        C.y = box.tam.y;
-        D.x = box.tam.x + 1;
-        D.y = box.tam.y + 1;
+        A.x = box.center.x - 1;
+        A.y = box.center.y;
+        B.x = box.center.x;
+        B.y = box.center.y;
+        C.x = box.center.x + 1;
+        C.y = box.center.y;
+        D.x = box.center.x + 1;
+        D.y = box.center.y + 1;
     }
     if(box.type == 2)//J
     {
-        A.x = box.tam.x - 1;
-        A.y = box.tam.y ;
-        B.x = box.tam.x;
-        B.y = box.tam.y;
-        C.x = box.tam.x + 1;
-        C.y = box.tam.y;
-        D.x = box.tam.x + 1;
-        D.y = box.tam.y - 1;
+        A.x = box.center.x - 1;
+        A.y = box.center.y ;
+        B.x = box.center.x;
+        B.y = box.center.y;
+        C.x = box.center.x + 1;
+        C.y = box.center.y;
+        D.x = box.center.x + 1;
+        D.y = box.center.y - 1;
     }
     if(box.type == 3)//Z
     {
-        A.x = box.tam.x + 1;
-        A.y = box.tam.y - 1;
-        B.x = box.tam.x + 1;
-        B.y = box.tam.y;
-        C.x = box.tam.x ;
-        C.y = box.tam.y;
-        D.x = box.tam.x;
-        D.y = box.tam.y+1;
+        A.x = box.center.x + 1;
+        A.y = box.center.y - 1;
+        B.x = box.center.x + 1;
+        B.y = box.center.y;
+        C.x = box.center.x ;
+        C.y = box.center.y;
+        D.x = box.center.x;
+        D.y = box.center.y+1;
     }
     if(box.type == 4)//S
     {
-        A.x = box.tam.x;
-        A.y = box.tam.y - 1;
-        B.x = box.tam.x;
-        B.y = box.tam.y;
-        C.x = box.tam.x + 1;
-        C.y = box.tam.y;
-        D.x = box.tam.x + 1;
-        D.y = box.tam.y + 1;
+        A.x = box.center.x;
+        A.y = box.center.y - 1;
+        B.x = box.center.x;
+        B.y = box.center.y;
+        C.x = box.center.x + 1;
+        C.y = box.center.y;
+        D.x = box.center.x + 1;
+        D.y = box.center.y + 1;
     }
     if(box.type == 5)//T
     {
-        A.x = box.tam.x - 1;
-        A.y = box.tam.y;
-        B.x = box.tam.x;
-        B.y = box.tam.y - 1;
-        C.x = box.tam.x;
-        C.y = box.tam.y;
-        D.x = box.tam.x;
-        D.y = box.tam.y + 1;
+        A.x = box.center.x - 1;
+        A.y = box.center.y;
+        B.x = box.center.x;
+        B.y = box.center.y - 1;
+        C.x = box.center.x;
+        C.y = box.center.y;
+        D.x = box.center.x;
+        D.y = box.center.y + 1;
     }
     if(box.type == 6)//O
     {
-        A.x = box.tam.x;
-        A.y = box.tam.y;
-        B.x = box.tam.x;
-        B.y = box.tam.y + 1;
-        C.x = box.tam.x + 1;
-        C.y = box.tam.y;
-        D.x = box.tam.x + 1;
-        D.y = box.tam.y + 1;
+        A.x = box.center.x;
+        A.y = box.center.y;
+        B.x = box.center.x;
+        B.y = box.center.y + 1;
+        C.x = box.center.x + 1;
+        C.y = box.center.y;
+        D.x = box.center.x + 1;
+        D.y = box.center.y + 1;
     }
     if(box.type == 7)//I
     {
-        A.x = box.tam.x - 2;
-        A.y = box.tam.y;
-        B.x = box.tam.x - 1;
-        B.y = box.tam.y ;
-        C.x = box.tam.x;
-        C.y = box.tam.y;
-        D.x = box.tam.x + 1;
-        D.y = box.tam.y;
+        A.x = box.center.x - 2;
+        A.y = box.center.y;
+        B.x = box.center.x - 1;
+        B.y = box.center.y ;
+        C.x = box.center.x;
+        C.y = box.center.y;
+        D.x = box.center.x + 1;
+        D.y = box.center.y;
     }
 }
-void turnLeft(gach &box,point &A,point &B,point &C,point &D,int &b)
+void turnLeft(brick &box,point &A,point &B,point &C,point &D,int &b)
 {
     if(IsMove(box,A,B,C,D,1))
     {
         b --;
-        box.tam.y -= 1;
+        box.center.y -= 1;
         A.y -= 1;
         B.y -= 1;
         C.y -= 1;
@@ -301,12 +301,12 @@ void turnLeft(gach &box,point &A,point &B,point &C,point &D,int &b)
     }
     else;
 }
-void turnRight(gach &box,point &A,point &B,point &C,point &D,int &b)
+void turnRight(brick &box,point &A,point &B,point &C,point &D,int &b)
 {
     if(IsMove(box,A,B,C,D,2))
     {
         b ++;
-        box.tam.y += 1;
+        box.center.y += 1;
         A.y += 1;
         B.y += 1;
         C.y += 1;
@@ -314,12 +314,12 @@ void turnRight(gach &box,point &A,point &B,point &C,point &D,int &b)
     }
     else;
 }
-void goDown(gach &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *renderer)//di xuong
+void goDown(brick &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *renderer)//di xuong
 {
     if(IsMove(box,A,B,C,D,0))
     {
         a+=1;
-        box.tam.x += 1;
+        box.center.x += 1;
         A.x += 1;
         B.x += 1;
         C.x += 1;
@@ -327,7 +327,7 @@ void goDown(gach &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *r
     }
     else;
 }
-void ve_le(SDL_Renderer *renderer)//ve nen ban choi
+void Print_Background(SDL_Renderer *renderer)//ve nen ban choi
 {
     SDL_Rect rect;
     rect.x = 0;
@@ -354,16 +354,12 @@ void ve_le(SDL_Renderer *renderer)//ve nen ban choi
     SDL_RenderFillRect(renderer, &rect3);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-    //SDL_RenderDrawLine(renderer,16*box.size,34*box.size+1,26*box.size-1,34*box.size+1);
     rect.x = 15;
     rect.y = 15;
     rect.w = SCREEN_WIDTH - 30;
     rect.h = SCREEN_HEIGHT - 30;
     SDL_SetRenderDrawColor(renderer,255,255,255,0);
     SDL_RenderDrawRect(renderer,&rect);
-}
-void ve_le2(SDL_Renderer *renderer)// tt ve le1
-{
     SDL_Rect rect5;
     rect5.x = (SCREEN_WIDTH-10*20)/2 ;
     rect5.y = 0;
@@ -381,13 +377,13 @@ void ve_le2(SDL_Renderer *renderer)// tt ve le1
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { (le_trai-1)*20, 0, 14*20, 3*20 };
+    SDL_Rect dstrect = { (left_margin-1)*20, 0, 14*20, 3*20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-
 }
-bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)// kiem tra neu xoay thi khoi gach co ra ngoai ban choi khong
+
+bool inside(SDL_Renderer *renderer,brick &box,point A,point B,point C,point D)// kiem tra neu xoay thi khoi gach co ra ngoai ban choi khong
 {
-    xoay(renderer,box,1,A,B,C,D);
+    rotary(renderer,box,1,A,B,C,D);
     int le_trai1 = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
     int le_phai1 = le_trai1+9;
     bool checkA = (A.y <= le_phai1 && A.y >= le_trai1 && board_game[A.x][A.y] == 0);
@@ -398,7 +394,7 @@ bool inside(SDL_Renderer *renderer,gach &box,point A,point B,point C,point D)// 
     //cout<<checkA<<","<<checkB<<","<<checkC<<","<<checkD<<endl;
     return check;
 }
-void co_dinh_gach(point A,point B,point C,point D,gach &box)//co dinh gach khi no dung lai
+void Fixed_Block(point A,point B,point C,point D,brick &box)//co dinh gach khi no dung lai
 {
 
     board_game[A.x][A.y] = box.type;
@@ -406,11 +402,11 @@ void co_dinh_gach(point A,point B,point C,point D,gach &box)//co dinh gach khi n
     board_game[C.x][C.y] = box.type;
     board_game[D.x][D.y] = box.type;
 }
-void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)//ve gach da co dinh
+void Print_Fixed_Block(SDL_Renderer *renderer,brick &box)//ve gach da co dinh
 {
-    for(int i=2; i<cao-1; i++)
+    for(int i=2; i<height-1; i++)
     {
-        for(int j=le_trai+1; j<=le_phai-1; j++)
+        for(int j=left_margin+1; j<=right_margin-1; j++)
         {
             if(board_game[i][j] != 0)
             {
@@ -449,29 +445,29 @@ void ve_gach_da_co_dinh(SDL_Renderer *renderer,gach &box)//ve gach da co dinh
     }
 }
 
-void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi khi nhung dong da full bien mat
+void delete_row(SDL_Renderer *renderer,brick &box)//tinh diem va ve lai ban choi khi nhung dong da full bien mat
 {
     //int old_score = score;
-    int count[cao-1];
-    for(int i=0; i<cao-1; i++)
+    int count[height-1];
+    for(int i=0; i<height-1; i++)
     {
         count[i]=0;
     }
-    for(int i=le_trai+1; i<=le_phai-1; i++)
+    for(int i=left_margin+1; i<=right_margin-1; i++)
     {
-        for(int j=4; j<cao-1; j++)
+        for(int j=4; j<height-1; j++)
         {
             if(board_game[j][i] ==1 || board_game[j][i] ==2 || board_game[j][i] ==3 || board_game[j][i] ==4 || board_game[j][i] ==5 || board_game[j][i] ==6 || board_game[j][i] ==7)
                 count[j]++;
         }
     }
-    for(int i = cao-2; i>=5;)
+    for(int i = height-2; i>=5;)
     {
         if(count[i]== 10)
         {
             for(int j=i; j>=4; j--)
             {
-                for(int k=le_trai+1; k<=le_phai-1; k++)
+                for(int k=left_margin+1; k<=right_margin-1; k++)
                 {
                     board_game[j][k] = board_game[j-1][k];
                     board_game[4][k]=0;
@@ -485,12 +481,12 @@ void lui_dong(SDL_Renderer *renderer,gach &box)//tinh diem va ve lai ban choi kh
     }
     //cout<<score<<endl;
     //if(score != old_score) SDL_Delay(120);
-    ve_gach_da_co_dinh(renderer,box);
+    Print_Fixed_Block(renderer,box);
 }
 
-bool end_game(gach &box)//kiem tra co phan nao cua khoi gach cham dinh chua
+bool End_Game(brick &box)//kiem tra co phan nao cua khoi gach cham dinh chua
 {
-    for(int i=le_trai+1; i<=le_phai-1; i++)
+    for(int i=left_margin+1; i<=right_margin-1; i++)
     {
         if(board_game[4][i] == 1 || board_game[4][i] == 2 || board_game[4][i] == 3 || board_game[4][i] == 4 || board_game[4][i] == 5 || board_game[4][i] == 6 || board_game[4][i] == 7)
             return true;
@@ -498,10 +494,10 @@ bool end_game(gach &box)//kiem tra co phan nao cua khoi gach cham dinh chua
     return false;
 }
 
-void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)// hien thi khoi gach tiep theo xuat hien
+void Print_Next_Block(brick box,SDL_Renderer *renderer,int hinh_truoc)// hien thi khoi gach tiep theo xuat hien
 {
     SDL_Rect rect;
-    rect.x = (le_phai+1)*box.size;
+    rect.x = (right_margin+1)*box.size;
     rect.y = 4*box.size;
     rect.w = 5*box.size;
     rect.h = 6*box.size;
@@ -522,16 +518,16 @@ void khoi_gach_tiep_theo(gach box,SDL_Renderer *renderer,int hinh_truoc)// hien 
     else
         SDL_SetRenderDrawColor(renderer,  247, 15, 3, 0);
     point a,b,c,d;
-    box.get_toa_do_Tam(7,le_phai+3);
+    box.Get_Center_Brick(7,right_margin+3);
     box.getType(hinh_truoc);
-    getABCD(box,a,b,c,d);
+    shape_of_you(box,a,b,c,d);
     box.render(renderer,a,b,c,d,box.type);
 }
 
 void printScore(SDL_Renderer *renderer,int number)
 {
     SDL_Rect rect;
-    rect.x = (le_phai+1)*20;
+    rect.x = (right_margin+1)*20;
     rect.y = 11*20;
     rect.w = 5*20;
     rect.h = 2*20;
@@ -546,7 +542,7 @@ void printScore(SDL_Renderer *renderer,int number)
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { (le_phai+2)*20-10, 12*20-10, 60, 20 };
+    SDL_Rect dstrect = { (right_margin+2)*20-10, 12*20-10, 60, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
     color = { 255, 0, 255 };
@@ -557,19 +553,19 @@ void printScore(SDL_Renderer *renderer,int number)
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
     if(number < 10 )
     {
-        dstrect = { (le_phai+5)*20-10, 120*2-10, 10, 20 };
+        dstrect = { (right_margin+5)*20-10, 120*2-10, 10, 20 };
     }
     else if(number < 100)
     {
-        dstrect = { (le_phai+5)*20-10, 120*2-10, 20, 20 };
+        dstrect = { (right_margin+5)*20-10, 120*2-10, 20, 20 };
     }
     else
     {
-        dstrect = { (le_phai+5)*20-10, 120*2-10, 30, 20 };
+        dstrect = { (right_margin+5)*20-10, 120*2-10, 30, 20 };
     }
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
     //hien thi o reset game
-    rect.x = (le_phai+1)*20;
+    rect.x = (right_margin+1)*20;
     rect.y = 14*20;
     rect.w = 5*20;
     rect.h = 2*20;
@@ -582,10 +578,10 @@ void printScore(SDL_Renderer *renderer,int number)
     texW = 0;
     texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = { (le_phai+2)*20+5, 15*20-10, 50, 20 };
+    dstrect = { (right_margin+2)*20+5, 15*20-10, 50, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
-    rect.x = (le_phai+1)*20;
+    rect.x = (right_margin+1)*20;
     rect.y = 17*20;
     rect.w = 5*20;
     rect.h = 2*20;
@@ -598,10 +594,10 @@ void printScore(SDL_Renderer *renderer,int number)
     texW = 0;
     texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = { (le_phai+2)*20+5, 18*20-10, 50, 20 };
+    dstrect = { (right_margin+2)*20+5, 18*20-10, 50, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
-    rect.x = (le_phai+1)*20;
+    rect.x = (right_margin+1)*20;
     rect.y = 20*20;
     rect.w = 5*20;
     rect.h = 2*20;
@@ -614,32 +610,32 @@ void printScore(SDL_Renderer *renderer,int number)
     texW = 0;
     texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = { (le_phai+2)*20+5, 21*20-10, 50, 20 };
+    dstrect = { (right_margin+2)*20+5, 21*20-10, 50, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
 }
 void printEndgame(SDL_Renderer *renderer,int number)// hien thi cua so khi thua
 {
-    SDL_Rect rect = { le_trai*20, 11*20, 12*20, 6*20};
+    SDL_Rect rect = { left_margin*20, 11*20, 12*20, 6*20};
     SDL_SetRenderDrawColor(renderer,0,0,0,0);
     SDL_RenderFillRect(renderer,&rect);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,le_trai*20+2,11*20+2,(le_phai+1)*20-2,11*20+2);
+    SDL_RenderDrawLine(renderer,left_margin*20+2,11*20+2,(right_margin+1)*20-2,11*20+2);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(le_phai+1)*20-2,11*20+2,(le_phai+1)*20-2,17*20-2);
+    SDL_RenderDrawLine(renderer,(right_margin+1)*20-2,11*20+2,(right_margin+1)*20-2,17*20-2);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,le_trai*20+2,17*20-2,(le_phai+1)*20-2,17*20-2);
+    SDL_RenderDrawLine(renderer,left_margin*20+2,17*20-2,(right_margin+1)*20-2,17*20-2);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,le_trai*20+2,11*20+2,le_trai*20+2,17*20-2);
+    SDL_RenderDrawLine(renderer,left_margin*20+2,11*20+2,left_margin*20+2,17*20-2);
 
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(le_trai+1)*20-10,12*20-10,(le_trai+11)*20+10,12*20-10);
+    SDL_RenderDrawLine(renderer,(left_margin+1)*20-10,12*20-10,(left_margin+11)*20+10,12*20-10);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(le_trai+11)*20+10,12*20-10,(le_trai+11)*20+10,16*20+10);
+    SDL_RenderDrawLine(renderer,(left_margin+11)*20+10,12*20-10,(left_margin+11)*20+10,16*20+10);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(le_trai+1)*20-10,16*20+10,(le_trai+11)*20+10,16*20+10);
+    SDL_RenderDrawLine(renderer,(left_margin+1)*20-10,16*20+10,(left_margin+11)*20+10,16*20+10);
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(le_trai+1)*20-10,12*20-10,(le_trai+1)*20-10,16*20+10);
+    SDL_RenderDrawLine(renderer,(left_margin+1)*20-10,12*20-10,(left_margin+1)*20-10,16*20+10);
 
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 80);
@@ -649,13 +645,13 @@ void printEndgame(SDL_Renderer *renderer,int number)// hien thi cua so khi thua
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { (le_trai+4)*20-1, 120*2-10, 80, 19 };
+    SDL_Rect dstrect = { (left_margin+4)*20-1, 120*2-10, 80, 19 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 
     surface = TTF_RenderText_Solid(font,"SCORE", color);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = {(le_trai+5)*20-2, 130*2-8, 45, 19 };
+    dstrect = {(left_margin+5)*20-2, 130*2-8, 45, 19 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
     color = {255,0,0};
     string s = to_string(number);
@@ -665,24 +661,24 @@ void printEndgame(SDL_Renderer *renderer,int number)// hien thi cua so khi thua
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
     if(number < 10 )
     {
-        dstrect = { (le_trai+6)*20-6, 140*2-6, 10, 19 };
+        dstrect = { (left_margin+6)*20-6, 140*2-6, 10, 19 };
     }
     else if(number < 100)
     {
-        dstrect = { (le_trai+6)*20-13, 140*2-6, 20, 19 };
+        dstrect = { (left_margin+6)*20-13, 140*2-6, 20, 19 };
     }
     else
     {
-        dstrect = { (le_trai+6)*20-18, 140*2-6, 30, 19 };
+        dstrect = { (left_margin+6)*20-18, 140*2-6, 30, 19 };
     }
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
     color = {39, 200, 0};
     surface = TTF_RenderText_Solid(font," PLAY AGAIN", color);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = { (le_trai+2)*20+20, 150*2, 110, 19 };
+    dstrect = { (left_margin+2)*20+20, 150*2, 110, 19 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-    SDL_Rect rect1 = { (le_trai+2)*20+22, 150*2-2, 116, 23 };
+    SDL_Rect rect1 = { (left_margin+2)*20+22, 150*2-2, 116, 23 };
     SDL_SetRenderDrawColor(renderer,66, 103, 178,0);
     SDL_RenderDrawRect(renderer,&rect1);
 

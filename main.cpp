@@ -5,7 +5,7 @@
 #include <ctime>
 #include <cmath>
 #include <fstream>
-#include "gach.h"
+#include "brick.h"
 #include "ai.h"
 
 using namespace std;
@@ -80,31 +80,31 @@ void playGame()
         play_again = false;
         bool quit = false,end = false;
         count_AI = 0;
-        gach box;
+        brick box;
         int time_delay;
         point A,B,C,D;
         int a,b;//toa do tam
 
 
         a=2;
-        b=dai/2-1;
-        box.get_toa_do_Tam(a,b);
+        b=width/2-1;
+        box.Get_Center_Brick(a,b);
         score = 0;
         srand(time(0));
-        int hinh_truoc = rand() % 7 + 1, hinh_sau;
+        int next_block = rand() % 7 + 1, cur_block;
         bool run_AI = false;
         init();
-        gach box1;
+        brick box1;
         SDL_Event e;
         while(!end)
         {
             quit = false;
-            k=0;//dung de quay truong hop 7,3,4
-            hinh_sau = hinh_truoc;
-            box.getType(hinh_sau);
-            box.get_toa_do_Tam(a,b);
-            getABCD(box,A,B,C,D);
-            lui_dong(renderer,box);
+            k=0;//dung de xoay truong hop 7,3,4
+            cur_block = next_block;
+            box.getType(cur_block);
+            box.Get_Center_Brick(a,b);
+            shape_of_you(box,A,B,C,D);
+            delete_row(renderer,box);
 //====================================================================================================================
 //====================================================================================================================
 //====================================================================================================================
@@ -118,28 +118,28 @@ void playGame()
                 {
                     for(int j=0; j<10; j++)
                     {
-                        diem_AI[i][j] = MAXXX;
+                        score_AI[i][j] = MAXXX;
                     }
                 }
                 int col_high_min = 2;
                 int high_min = 100;
                 // dong thap nhat
                 int Count1=0;
-                for(int i = le_trai +1; i <= le_phai-1; i++ )
+                for(int i = left_margin +1; i <= right_margin-1; i++ )
                 {
                     Count1 = 0;
-                    for(int j = 4; j < cao-1 ; j++)
+                    for(int j = 4; j < height-1 ; j++)
                     {
-                        if(board_ao[j][i] == 0 )
+                        if(board_clone[j][i] == 0 )
                         {
                             Count1++;
                         }
                         else break;
                     }
-                    int do_cao = (cao-5) - Count1;
-                    if(do_cao < high_min )
+                    int _height = (height-5) - Count1;
+                    if(_height < high_min )
                     {
-                        high_min = do_cao;
+                        high_min = _height;
                         col_high_min = i;
                     }
                 }
@@ -148,18 +148,18 @@ void playGame()
                     for(int y=0; y<4; y++)
                     {
                         init_clone(box,a,b);
-                        gach box2 = box;
-                        box2.getType(hinh_sau);
+                        brick box2 = box;
+                        box2.getType(cur_block);
                         point a_,b_,c_,d_;
 
 
-                        box2.get_toa_do_Tam(2,x+le_trai+1);
-                        getABCD(box2,a_,b_,c_,d_);
-                        xoay(renderer,box2,y,a_,b_,c_,d_);
+                        box2.Get_Center_Brick(2,x+left_margin+1);
+                        shape_of_you(box2,a_,b_,c_,d_);
+                        rotary(renderer,box2,y,a_,b_,c_,d_);
                         if(!inside_AI(box2,a_,b_,c_,d_))
                         {
 
-                            diem_AI[y][x] = -8888;
+                            score_AI[y][x] = -8888;
                             continue;
                         }
                         else
@@ -168,10 +168,10 @@ void playGame()
                             {
                                 goDown(box2,a_,b_,c_,d_,a2,renderer);
                             }
-                            board_ao[a_.x][a_.y] = box2.type;
-                            board_ao[b_.x][b_.y] = box2.type;
-                            board_ao[c_.x][c_.y] = box2.type;
-                            board_ao[d_.x][d_.y] = box2.type;
+                            board_clone[a_.x][a_.y] = box2.type;
+                            board_clone[b_.x][b_.y] = box2.type;
+                            board_clone[c_.x][c_.y] = box2.type;
+                            board_clone[d_.x][d_.y] = box2.type;
 //XET 4 DIEU KIEN : chieu cao tong hop(CCTH), so dong full(SDF), so luong ho(Holes), so gieng(Gieng)
 
                             double CCTH = 0;
@@ -181,19 +181,19 @@ void playGame()
                                 Count[i] = 0;
                             }
                             int gieng[9];
-                            for(int i = le_trai +1; i <= le_phai-1; i++ )
+                            for(int i = left_margin +1; i <= right_margin-1; i++ )
                             {
-                                for(int j = 4; j < cao-1 ; j++)
+                                for(int j = 4; j < height-1 ; j++)
                                 {
-                                    if(board_ao[j][i] == 0 )
+                                    if(board_clone[j][i] == 0 )
                                     {
-                                        Count[i - le_trai - 1]++;
+                                        Count[i - left_margin - 1]++;
                                     }
                                     else break;
                                 }
-                                int do_cao = (cao-5) - Count[i - le_trai - 1];
-                                CCTH += do_cao;
-                                gieng[i - le_trai - 1] = do_cao;
+                                int _height = (height-5) - Count[i - left_margin - 1];
+                                CCTH += _height;
+                                gieng[i - left_margin - 1] = _height;
                             }
                             double Gieng = 0;
                             for(int i = 0; i < 8; i ++)
@@ -202,12 +202,12 @@ void playGame()
                             }
                             int SDF = 0;
                             int cOunt = 0;
-                            for(int i=4; i<cao-1; i++)
+                            for(int i=4; i<height-1; i++)
                             {
                                 cOunt = 0;
-                                for(int j = le_trai+1 ; j <= le_phai-1; j++)
+                                for(int j = left_margin+1 ; j <= right_margin-1; j++)
                                 {
-                                    if(board_ao[i][j] != 0) cOunt++;
+                                    if(board_clone[i][j] != 0) cOunt++;
                                 }
                                 if(cOunt == 10)
                                 {
@@ -217,34 +217,34 @@ void playGame()
                             }
 
                             double Holes = 0;
-                            for(int i=5; i<cao-1; i++)
+                            for(int i=5; i<height-1; i++)
                             {
-                                for(int j = le_trai+1 ; j <= le_phai-1; j++)
+                                for(int j = left_margin+1 ; j <= right_margin-1; j++)
                                 {
-                                    if(board_ao[i][j] ==0 && board_ao[i-1][j] >= 1 && board_ao[i-1][j] <=7) Holes+=1.0;
+                                    if(board_clone[i][j] ==0 && board_clone[i-1][j] >= 1 && board_clone[i-1][j] <=7) Holes+=1.0;
                                 }
                             }
                             double tong_Diem = hs1*CCTH + hs2*SDF + hs3*Holes + hs4*Gieng;
-                            cout<<CCTH<<" "<<SDF<<" "<<Holes<<" "<<Gieng<<" TONG DIEM : "<<tong_Diem<<endl;
-                            if(x+le_trai+1 == col_high_min)
+                            //cout<<CCTH<<" "<<SDF<<" "<<Holes<<" "<<Gieng<<" TONG DIEM : "<<tong_Diem<<endl;
+                            if(x+left_margin+1 == col_high_min)
                                 tong_Diem = tong_Diem + hs5*high_min;
-                            diem_AI[y][x] = tong_Diem;
+                            score_AI[y][x] = tong_Diem;
 
                         }
                     }
                 }
-                int x_=1,y_=dai/2-3;
-                double max_diem_AI = MAXXX + 1.0;
+                int x_=1,y_=width/2-3;
+                double max_score_AI = MAXXX + 1.0;
                 for(int i = 0; i < 4; i++)
                 {
                     for(int j = 0; j < 10; j++)
                     {
-                        if(diem_AI[i][j] == -8888) continue;
-                        if(diem_AI[i][j] > max_diem_AI)
+                        if(score_AI[i][j] == -8888) continue;
+                        if(score_AI[i][j] > max_score_AI)
                         {
-                            max_diem_AI = diem_AI[i][j];
+                            max_score_AI = score_AI[i][j];
                             x_ = i;
-                            y_ = j + le_trai + 1;
+                            y_ = j + left_margin + 1;
                         }
                         //cout<<diem_AI[i][j] << endl;
                     }
@@ -253,9 +253,9 @@ void playGame()
                 a=2;
 
                 b=y_;
-                box.get_toa_do_Tam(a,b);
-                getABCD(box,A,B,C,D);
-                xoay(renderer,box,x_,A,B,C,D);
+                box.Get_Center_Brick(a,b);
+                shape_of_you(box,A,B,C,D);
+                rotary(renderer,box,x_,A,B,C,D);
 
             }
 //====================================================================================================================
@@ -264,7 +264,8 @@ void playGame()
 // END AI
 
             srand(time(0));
-            hinh_truoc = rand() % 7 + 1;
+            next_block = rand() % 7 + 1; //lay hinh tiep theo
+
             while(!quit)
             {
                 if(dark)
@@ -273,17 +274,17 @@ void playGame()
                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 
                 SDL_RenderClear(renderer);
-                ve_le(renderer);
+
                 box.render(renderer,A,B,C,D,box.type);
 
                 goDown(box,A,B,C,D,a,renderer);
-                ve_gach_da_co_dinh(renderer,box);
-                printScore(renderer,score);
+                Print_Fixed_Block(renderer,box);
+
                 time_delay = 150;
-                ve_le2(renderer);
 
-                khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
-
+                Print_Background(renderer);
+                Print_Next_Block(box1,renderer,next_block);
+                printScore(renderer,score);
                 SDL_RenderPresent(renderer);
                 if(!run_AI)
                 {
@@ -323,13 +324,15 @@ void playGame()
                                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
 
                             SDL_RenderClear(renderer);
-                            co_dinh_gach(A,B,C,D,box);
-                            ve_gach_da_co_dinh(renderer,box);
-                            ve_le(renderer);
-                            ve_le2(renderer);
-                            printScore(renderer,score);
-                            khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
+                            Fixed_Block(A,B,C,D,box);
+                            Print_Fixed_Block(renderer,box);
+
+
+
                             box.render(renderer,A,B,C,D,box.type);
+                            Print_Background(renderer);
+                            Print_Next_Block(box1,renderer,next_block);
+                            printScore(renderer,score);
                             SDL_RenderPresent(renderer);
                             break;
                         case SDLK_w:
@@ -337,18 +340,19 @@ void playGame()
                             if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D))
                             {
                                 k++;
-                                xoay(renderer,box,k,A,B,C,D);
+                                rotary(renderer,box,k,A,B,C,D);
                                 if(dark)
                                     SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                                 else
                                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                                 SDL_RenderClear(renderer);
-                                ve_le(renderer);
-                                ve_gach_da_co_dinh(renderer,box);
-                                printScore(renderer,score);
+
+                                Print_Fixed_Block(renderer,box);
                                 box.render(renderer,A,B,C,D,box.type);
-                                ve_le2(renderer);
-                                khoi_gach_tiep_theo(box1,renderer,hinh_truoc);
+
+                                Print_Background(renderer);
+                                Print_Next_Block(box1,renderer,next_block);
+                                printScore(renderer,score);
                                 SDL_RenderPresent(renderer);
                                 SDL_Delay(time_delay*1/5);
                             }
@@ -358,12 +362,12 @@ void playGame()
                     if (e.type == SDL_MOUSEBUTTONDOWN)
                     {
 
-                        bool checkk = (e.button.x >= (le_phai+1)*20 && e.button.x <= (le_phai+1)*20+5*20 &&
+                        bool checkk = (e.button.x >= (right_margin+1)*20 && e.button.x <= (right_margin+1)*20+5*20 &&
                                        e.button.y >= 17*20 && e.button.y <= 17*20+20*2);
                         if(checkk)
                         {
                             SDL_Rect rect;
-                            rect.x = (le_phai+1)*20;
+                            rect.x = (right_margin+1)*20;
                             rect.y = 17*20;
                             rect.w = 5*20;
                             rect.h = 2*20;
@@ -375,13 +379,13 @@ void playGame()
                             play_again = true;
                             break;
                         }
-                        checkk = (e.button.x >= (le_phai+1)*20 && e.button.x <= (le_phai+1)*20+5*20 &&
+                        checkk = (e.button.x >= (right_margin+1)*20 && e.button.x <= (right_margin+1)*20+5*20 &&
                                   e.button.y >= 14*20 && e.button.y <= 14*20+20*2);
                         if(checkk)
                         {
                             count_dark++;
                             SDL_Rect rect;
-                            rect.x = (le_phai+1)*20;
+                            rect.x = (right_margin+1)*20;
                             rect.y = 14*20;
                             rect.w = 5*20;
                             rect.h = 2*20;
@@ -394,13 +398,13 @@ void playGame()
                                 dark = false;
 
                         }
-                        checkk = (e.button.x >= (le_phai+1)*20 && e.button.x <= (le_phai+1)*20+5*20 &&
+                        checkk = (e.button.x >= (right_margin+1)*20 && e.button.x <= (right_margin+1)*20+5*20 &&
                                   e.button.y >= 20*20 && e.button.y <= 20*20+20*2);
                         if(checkk)
                         {
                             count_AI++;
                             SDL_Rect rect;
-                            rect.x = (le_phai+1)*20;
+                            rect.x = (right_margin+1)*20;
                             rect.y = 20*20;
                             rect.w = 5*20;
                             rect.h = 2*20;
@@ -420,21 +424,23 @@ void playGame()
 
                 if(!IsMove(box,A,B,C,D,0))
                 {
-                    co_dinh_gach(A,B,C,D,box);
+                    Fixed_Block(A,B,C,D,box);
 
-                    if(end_game(box))
+                    if(End_Game(box))
                     {
                         if(dark)
                             SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                         else
                             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
                         SDL_RenderClear(renderer);
-                        ve_le(renderer);
-                        ve_gach_da_co_dinh(renderer,box);
-                        khoi_gach_tiep_theo(box,renderer,hinh_truoc);
-                        ve_le2(renderer);
+
+                        Print_Fixed_Block(renderer,box);
+                        Print_Next_Block(box,renderer,next_block);
+
+                        Print_Background(renderer);
                         printScore(renderer,score);
                         printEndgame(renderer,score);
+
                         SDL_RenderPresent(renderer);
 
                         fstream f1;
@@ -475,12 +481,12 @@ void playGame()
                             }
                             if (e1.type == SDL_MOUSEBUTTONDOWN)
                             {
-                                bool checkk = (e1.button.x >= (le_trai+2)*20+22 && e1.button.x <= (le_trai+2)*20+22+116 &&
+                                bool checkk = (e1.button.x >= (left_margin+2)*20+22 && e1.button.x <= (left_margin+2)*20+22+116 &&
                                                e1.button.y >= 150*2-2 && e1.button.y <= 150*2-2 + 23);
                                 if(checkk)
                                 {
                                     SDL_Rect rect;
-                                    rect.x = (le_trai+2)*20+22;
+                                    rect.x = (left_margin+2)*20+22;
                                     rect.y = 150*2-2;
                                     rect.w = 116;
                                     rect.h = 23;
@@ -500,7 +506,7 @@ void playGame()
                     else
                     {
                         a=2;
-                        b=dai/2-1;
+                        b=width/2-1;
                         break;
                     }
                 }
@@ -519,17 +525,16 @@ void playGame()
 }
 void drawStart(SDL_Renderer *renderer1)
 {
-    ve_le(renderer1);
-    ve_le2(renderer1);
+    Print_Background(renderer1);
     SDL_Rect filled_rect;
-    filled_rect.x = 20*(le_trai+1)+20;
+    filled_rect.x = 20*(left_margin+1)+20;
     filled_rect.y = SCREEN_HEIGHT/2 - 180;
     filled_rect.w = 160;
     filled_rect.h = 200;
     SDL_SetRenderDrawColor(renderer1,0, 170, 170, 0);
     SDL_RenderFillRect(renderer1,&filled_rect);
 
-    filled_rect.x = 20*(le_trai+1)+36;
+    filled_rect.x = 20*(left_margin+1)+36;
     filled_rect.y = SCREEN_HEIGHT/2 - 165;
     filled_rect.w = 124;
     filled_rect.h = 80;
@@ -556,7 +561,7 @@ int main(int argc, char* argv[])
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    SDL_Rect dstrect = { 20*(le_trai+1)+55, SCREEN_HEIGHT/2 - 165, 90, 18 };
+    SDL_Rect dstrect = { 20*(left_margin+1)+55, SCREEN_HEIGHT/2 - 165, 90, 18 };
     SDL_RenderCopy(renderer1, texture, NULL, &dstrect);
     //hien thi high score
     fstream f;
@@ -571,15 +576,15 @@ int main(int argc, char* argv[])
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
     if(num < 10 )
     {
-        dstrect = { 20*(le_trai+1)+97-6,  SCREEN_HEIGHT/2 - 145, 10, 19 };
+        dstrect = { 20*(left_margin+1)+97-6,  SCREEN_HEIGHT/2 - 145, 10, 19 };
     }
     else if(num < 100)
     {
-        dstrect = { 20*(le_trai+1)+97-13,  SCREEN_HEIGHT/2 - 145, 20, 19 };
+        dstrect = { 20*(left_margin+1)+97-13,  SCREEN_HEIGHT/2 - 145, 20, 19 };
     }
     else
     {
-        dstrect = { 20*(le_trai+1)+97-18,  SCREEN_HEIGHT/2 - 145, 30, 19 };
+        dstrect = { 20*(left_margin+1)+97-18,  SCREEN_HEIGHT/2 - 145, 30, 19 };
     }
     SDL_RenderCopy(renderer1, texture, NULL, &dstrect);
 
@@ -588,14 +593,14 @@ int main(int argc, char* argv[])
     f.close();
     //ve nut PLAY
     SDL_Rect filled_rect;
-    filled_rect.x = 20*(le_trai+1)+60;
+    filled_rect.x = 20*(left_margin+1)+60;
     filled_rect.y = SCREEN_HEIGHT/2 - 40;
     filled_rect.w = 80;
     filled_rect.h = 40;
     SDL_SetRenderDrawColor(renderer1, 0,0,0,0);
     SDL_RenderFillRect(renderer1,&filled_rect);
     //vien nut
-    filled_rect.x = 20*(le_trai+1)+60;
+    filled_rect.x = 20*(left_margin+1)+60;
     filled_rect.y = SCREEN_HEIGHT/2 - 40;
     filled_rect.w = 80;
     filled_rect.h = 40;
@@ -607,7 +612,7 @@ int main(int argc, char* argv[])
     surface = TTF_RenderText_Solid(font, "PLAY", color);
     texture = SDL_CreateTextureFromSurface(renderer1, surface);
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = { 20*(le_trai+1)+64, SCREEN_HEIGHT/2 - 38, 72, 32 };
+    dstrect = { 20*(left_margin+1)+64, SCREEN_HEIGHT/2 - 38, 72, 32 };
     SDL_RenderCopy(renderer1, texture, NULL, &dstrect);
     SDL_RenderPresent(renderer1);
     bool play = false;
@@ -623,12 +628,12 @@ int main(int argc, char* argv[])
             break;
         if (e1.type == SDL_MOUSEBUTTONDOWN)
         {
-            bool checkk = (e1.button.x >= 20*(le_trai+1)+60 && e1.button.x <= 20*(le_trai+1)+60+80 &&
+            bool checkk = (e1.button.x >= 20*(left_margin+1)+60 && e1.button.x <= 20*(left_margin+1)+60+80 &&
                            e1.button.y >= SCREEN_HEIGHT/2 - 40 && e1.button.y <= SCREEN_HEIGHT/2);
             if(checkk)
             {
                 SDL_Rect rect;
-                rect.x = 20*(le_trai+1)+60;
+                rect.x = 20*(left_margin+1)+60;
                 rect.y = SCREEN_HEIGHT/2 - 40;
                 rect.w = 80;
                 rect.h = 40;
