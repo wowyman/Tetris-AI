@@ -7,4 +7,4 @@ Cách chơi: sử dụng các phím W A D S để điều khiển khối gạch 
 Em dùng mảng 2 chiều để lưu bàn chơi và ánh xạ từ hệ tọa độ của mảng sang hệ tọa độ của SDL_RenderFillRect để tác động lên các khối gạch. 
 
 High score được lưu vào file high_score.txt mỗi lần chơi được điểm cao hơn sẽ thay giá trị trong file.
-
+Có chức năng AI (hơi kém) để tự chơi,ấn RUN AI để chạy 
