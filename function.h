@@ -1,7 +1,8 @@
 #include <iostream>
 using namespace std;
 
-int k=0,score = 0;
+int score = 0;
+//int k=0;
 const int height = 29;
 const int width = 34;
 int count_dark = -1;
@@ -12,6 +13,12 @@ const int SCREEN_HEIGHT = height*20;
 int left_margin = (width - 10)/2 -1;
 int right_margin = left_margin + 11;
 int board_game[height][width];
+
+int a,b;//toa do tam
+brick box;
+
+
+
 void init()//khoi tao mang luu ban choi
 {
     for(int i=0; i<height; i++)
@@ -143,70 +150,90 @@ bool IsMove(brick &box,point &A,point &B,point &C,point &D,int direction)//direc
     check = (check1 && check2 && check3 && check4);
     return check;
 }
-void rotary(SDL_Renderer *renderer,brick& box,int k,point& A,point& B,point& C,point& D)
+//void rotary(brick& box,int k,point& A,point& B,point& C,point& D)
+//{
+//    if(k == 0);
+//    else
+//    {
+//        if(box.type == 1 || box.type == 2 || box.type == 5 )
+//        {
+//            int Xtemp=A.x;
+//            A.x=-A.y+box.center.x+box.center.y;
+//            A.y=Xtemp-box.center.x+box.center.y;
+//
+//            Xtemp=B.x;
+//            B.x=-B.y+box.center.x+box.center.y;
+//            B.y=Xtemp-box.center.x+box.center.y;
+//
+//            Xtemp=C.x;
+//            C.x=-C.y+box.center.x+box.center.y;
+//            C.y=Xtemp-box.center.x+box.center.y;
+//
+//            Xtemp=D.x;
+//            D.x=-D.y+box.center.x+box.center.y;
+//            D.y=Xtemp-box.center.x+box.center.y;
+//        }
+//        else if(box.type == 3 || box.type == 4 || box.type == 7)
+//        {
+//            if(k % 2 == 1)
+//            {
+//                int Xtemp=A.x;
+//                A.x=-A.y+box.center.x+box.center.y;
+//                A.y=Xtemp-box.center.x+box.center.y;
+//
+//                Xtemp=B.x;
+//                B.x=-B.y+box.center.x+box.center.y;
+//                B.y=Xtemp-box.center.x+box.center.y;
+//
+//                Xtemp=C.x;
+//                C.x=-C.y+box.center.x+box.center.y;
+//                C.y=Xtemp-box.center.x+box.center.y;
+//
+//                Xtemp=D.x;
+//                D.x=-D.y+box.center.x+box.center.y;
+//                D.y=Xtemp-box.center.x+box.center.y;
+//            }
+//            else if(k % 2 == 0 && k >=2 )
+//            {
+//                int Xtemp=A.x;
+//                A.x=A.y+box.center.x-box.center.y;
+//                A.y=-Xtemp+box.center.x+box.center.y;
+//
+//                Xtemp=B.x;
+//                B.x=B.y+box.center.x-box.center.y;
+//                B.y=-Xtemp+box.center.x+box.center.y;
+//
+//                Xtemp=C.x;
+//                C.x=C.y+box.center.x-box.center.y;
+//                C.y=-Xtemp+box.center.x+box.center.y;
+//
+//                Xtemp=D.x;
+//                D.x=D.y+box.center.x-box.center.y;
+//                D.y=-Xtemp+box.center.x+box.center.y;
+//            }
+//        }
+//        else if(box.type == 6);
+//    }
+//}
+void rotary(brick& box,point& A,point& B,point& C,point& D)
 {
-    if(k == 0);
-    else
-    {
-        if(box.type == 1 || box.type == 2 || box.type == 5 )
-        {
-            int Xtemp=A.x;
-            A.x=-A.y+box.center.x+box.center.y;
-            A.y=Xtemp-box.center.x+box.center.y;
+    int Xtemp=A.x;
+    A.x=-A.y+box.center.x+box.center.y;
+    A.y=Xtemp-box.center.x+box.center.y;
 
-            Xtemp=B.x;
-            B.x=-B.y+box.center.x+box.center.y;
-            B.y=Xtemp-box.center.x+box.center.y;
+    Xtemp=B.x;
+    B.x=-B.y+box.center.x+box.center.y;
+    B.y=Xtemp-box.center.x+box.center.y;
 
-            Xtemp=C.x;
-            C.x=-C.y+box.center.x+box.center.y;
-            C.y=Xtemp-box.center.x+box.center.y;
+    Xtemp=C.x;
+    C.x=-C.y+box.center.x+box.center.y;
+    C.y=Xtemp-box.center.x+box.center.y;
 
-            Xtemp=D.x;
-            D.x=-D.y+box.center.x+box.center.y;
-            D.y=Xtemp-box.center.x+box.center.y;
-        }
-        else if(box.type == 3 || box.type == 4 || box.type == 7)
-        {
-            if(k % 2 == 1)
-            {
-                int Xtemp=A.x;
-                A.x=-A.y+box.center.x+box.center.y;
-                A.y=Xtemp-box.center.x+box.center.y;
+    Xtemp=D.x;
+    D.x=-D.y+box.center.x+box.center.y;
+    D.y=Xtemp-box.center.x+box.center.y;
 
-                Xtemp=B.x;
-                B.x=-B.y+box.center.x+box.center.y;
-                B.y=Xtemp-box.center.x+box.center.y;
 
-                Xtemp=C.x;
-                C.x=-C.y+box.center.x+box.center.y;
-                C.y=Xtemp-box.center.x+box.center.y;
-
-                Xtemp=D.x;
-                D.x=-D.y+box.center.x+box.center.y;
-                D.y=Xtemp-box.center.x+box.center.y;
-            }
-            else if(k % 2 == 0 && k >=2 )
-            {
-                int Xtemp=A.x;
-                A.x=A.y+box.center.x-box.center.y;
-                A.y=-Xtemp+box.center.x+box.center.y;
-
-                Xtemp=B.x;
-                B.x=B.y+box.center.x-box.center.y;
-                B.y=-Xtemp+box.center.x+box.center.y;
-
-                Xtemp=C.x;
-                C.x=C.y+box.center.x-box.center.y;
-                C.y=-Xtemp+box.center.x+box.center.y;
-
-                Xtemp=D.x;
-                D.x=D.y+box.center.x-box.center.y;
-                D.y=-Xtemp+box.center.x+box.center.y;
-            }
-        }
-        else if(box.type == 6);
-    }
 }
 void shape_of_you(brick box,point &A,point &B,point &C,point &D)//khoi tao hinh dang khoi gach bang toa do 4 o gach
 {
@@ -383,7 +410,7 @@ void Print_Background(SDL_Renderer *renderer)//ve nen ban choi
 
 bool inside(SDL_Renderer *renderer,brick &box,point A,point B,point C,point D)// kiem tra neu xoay thi khoi gach co ra ngoai ban choi khong
 {
-    rotary(renderer,box,1,A,B,C,D);
+    rotary(box,A,B,C,D);
     int le_trai1 = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
     int le_phai1 = le_trai1+9;
     bool checkA = (A.y <= le_phai1 && A.y >= le_trai1 && board_game[A.x][A.y] == 0);

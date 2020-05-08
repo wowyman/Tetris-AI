@@ -75,15 +75,15 @@ void playGame()
     dark = false;
     count_dark = -1;
     int count_AI = 0;
+    bool run_AI = false;
     while(true)
     {
         play_again = false;
         bool quit = false,end = false;
-        count_AI = 0;
-        brick box;
+
+
         int time_delay;
         point A,B,C,D;
-        int a,b;//toa do tam
 
 
         a=2;
@@ -92,14 +92,14 @@ void playGame()
         score = 0;
         srand(time(0));
         int next_block = rand() % 7 + 1, cur_block;
-        bool run_AI = false;
+
         init();
         brick box1;
         SDL_Event e;
         while(!end)
         {
             quit = false;
-            k=0;//dung de xoay truong hop 7,3,4
+            //k=0;//dung de xoay truong hop 7,3,4
             cur_block = next_block;
             box.getType(cur_block);
             box.Get_Center_Brick(a,b);
@@ -113,7 +113,6 @@ void playGame()
 
             if(run_AI == true)
             {
-
                 for(int i=0; i<4; i++)
                 {
                     for(int j=0; j<10; j++)
@@ -121,44 +120,24 @@ void playGame()
                         score_AI[i][j] = MAXXX;
                     }
                 }
-                int col_high_min = 2;
-                int high_min = 100;
-                // dong thap nhat
-                int Count1=0;
-                for(int i = left_margin +1; i <= right_margin-1; i++ )
-                {
-                    Count1 = 0;
-                    for(int j = 4; j < height-1 ; j++)
-                    {
-                        if(board_clone[j][i] == 0 )
-                        {
-                            Count1++;
-                        }
-                        else break;
-                    }
-                    int _height = (height-5) - Count1;
-                    if(_height < high_min )
-                    {
-                        high_min = _height;
-                        col_high_min = i;
-                    }
-                }
                 for(int x=0; x<10; x++)
                 {
                     for(int y=0; y<4; y++)
                     {
-                        init_clone(box,a,b);
+                        init_clone();
                         brick box2 = box;
                         box2.getType(cur_block);
                         point a_,b_,c_,d_;
-
-
                         box2.Get_Center_Brick(2,x+left_margin+1);
                         shape_of_you(box2,a_,b_,c_,d_);
-                        rotary(renderer,box2,y,a_,b_,c_,d_);
+
+                        for(int rotation = 0; rotation <=y; rotation ++)
+                        {
+                            rotary(box2,a_,b_,c_,d_);
+                        }
+
                         if(!inside_AI(box2,a_,b_,c_,d_))
                         {
-
                             score_AI[y][x] = -8888;
                             continue;
                         }
@@ -190,6 +169,10 @@ void playGame()
                                         Count[i - left_margin - 1]++;
                                     }
                                     else break;
+//                                    if(board_clone[j][i] == 0)
+//                                    {
+//                                        Count[i - left_margin - 1]++;
+//                                    }
                                 }
                                 int _height = (height-5) - Count[i - left_margin - 1];
                                 CCTH += _height;
@@ -201,33 +184,28 @@ void playGame()
                                 Gieng = Gieng + abs(gieng[i] - gieng[i+1]);
                             }
                             int SDF = 0;
-                            int cOunt = 0;
                             for(int i=4; i<height-1; i++)
                             {
-                                cOunt = 0;
-                                for(int j = left_margin+1 ; j <= right_margin-1; j++)
+                                if(IsFullRow(i) == true)
                                 {
-                                    if(board_clone[i][j] != 0) cOunt++;
+                                    SDF ++;
                                 }
-                                if(cOunt == 10)
-                                {
-                                    SDF +=1;
-                                }
-
                             }
-
                             double Holes = 0;
                             for(int i=5; i<height-1; i++)
                             {
+
                                 for(int j = left_margin+1 ; j <= right_margin-1; j++)
                                 {
-                                    if(board_clone[i][j] ==0 && board_clone[i-1][j] >= 1 && board_clone[i-1][j] <=7) Holes+=1.0;
+                                    if(board_clone[i][j] ==0 && board_clone[i-1][j] != 0) Holes+=1;
                                 }
                             }
                             double tong_Diem = hs1*CCTH + hs2*SDF + hs3*Holes + hs4*Gieng;
+                            if(x+left_margin+1 == Max_high()&&box2.type != 3 &&box2.type != 4)
+                            {
+                                tong_Diem = tong_Diem + hs5*Gieng;
+                            }
                             //cout<<CCTH<<" "<<SDF<<" "<<Holes<<" "<<Gieng<<" TONG DIEM : "<<tong_Diem<<endl;
-                            if(x+left_margin+1 == col_high_min)
-                                tong_Diem = tong_Diem + hs5*high_min;
                             score_AI[y][x] = tong_Diem;
 
                         }
@@ -249,13 +227,16 @@ void playGame()
                         //cout<<diem_AI[i][j] << endl;
                     }
                 }
-                //cout<<"Max: " << max_diem_AI<<endl;
+                //cout<<"Max: " << max_score_AI<<endl;
                 a=2;
 
                 b=y_;
                 box.Get_Center_Brick(a,b);
                 shape_of_you(box,A,B,C,D);
-                rotary(renderer,box,x_,A,B,C,D);
+                for(int rotation=0; rotation<=x_; rotation++)
+                {
+                    rotary(box,A,B,C,D);
+                }
 
             }
 //====================================================================================================================
@@ -290,7 +271,7 @@ void playGame()
                 {
                     SDL_Delay(time_delay);
                 }
-                else SDL_Delay(1);
+                else SDL_Delay(0);
 
                 while( SDL_PollEvent( &e ) != 0 )
                 {
@@ -298,65 +279,65 @@ void playGame()
                     {
                         quit = true;
                     }
-                    if (e.type == SDL_KEYDOWN)
+                    if(run_AI == false)
                     {
-
-                        switch (e.key.keysym.sym)
+                        if (e.type == SDL_KEYDOWN)
                         {
-                        case SDLK_ESCAPE:
-                            break;
-                        case SDLK_a:
-                            SDL_Delay(time_delay/7);
-                            turnLeft(box,A,B,C,D,b);
-                            break;
-                        case SDLK_d:
-                            SDL_Delay(time_delay/7);
-                            turnRight(box,A,B,C,D,b);
-                            break;
-                        case SDLK_s:
-                            while(IsMove(box,A,B,C,D,0))
+
+                            switch (e.key.keysym.sym)
                             {
-                                goDown(box,A,B,C,D,a,renderer);
-                            }
-                            if(dark)
-                                SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
-                            else
-                                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
-
-                            SDL_RenderClear(renderer);
-                            Fixed_Block(A,B,C,D,box);
-                            Print_Fixed_Block(renderer,box);
-
-
-
-                            box.render(renderer,A,B,C,D,box.type);
-                            Print_Background(renderer);
-                            Print_Next_Block(box1,renderer,next_block);
-                            printScore(renderer,score);
-                            SDL_RenderPresent(renderer);
-                            break;
-                        case SDLK_w:
-                            SDL_Delay(time_delay/7);
-                            if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D))
-                            {
-                                k++;
-                                rotary(renderer,box,k,A,B,C,D);
+                            case SDLK_ESCAPE:
+                                break;
+                            case SDLK_a:
+                                SDL_Delay(time_delay/7);
+                                turnLeft(box,A,B,C,D,b);
+                                break;
+                            case SDLK_d:
+                                SDL_Delay(time_delay/7);
+                                turnRight(box,A,B,C,D,b);
+                                break;
+                            case SDLK_s:
+                                while(IsMove(box,A,B,C,D,0))
+                                {
+                                    goDown(box,A,B,C,D,a,renderer);
+                                }
                                 if(dark)
                                     SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                                 else
                                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+
                                 SDL_RenderClear(renderer);
-
+                                Fixed_Block(A,B,C,D,box);
                                 Print_Fixed_Block(renderer,box);
-                                box.render(renderer,A,B,C,D,box.type);
 
+                                box.render(renderer,A,B,C,D,box.type);
                                 Print_Background(renderer);
                                 Print_Next_Block(box1,renderer,next_block);
                                 printScore(renderer,score);
                                 SDL_RenderPresent(renderer);
-                                SDL_Delay(time_delay*1/5);
+                                break;
+                            case SDLK_w:
+                                SDL_Delay(time_delay/7);
+                                if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D))
+                                {
+                                    rotary(box,A,B,C,D);
+                                    if(dark)
+                                        SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
+                                    else
+                                        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+                                    SDL_RenderClear(renderer);
+
+                                    Print_Fixed_Block(renderer,box);
+                                    box.render(renderer,A,B,C,D,box.type);
+
+                                    Print_Background(renderer);
+                                    Print_Next_Block(box1,renderer,next_block);
+                                    printScore(renderer,score);
+                                    SDL_RenderPresent(renderer);
+                                    SDL_Delay(time_delay*1/5);
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                     if (e.type == SDL_MOUSEBUTTONDOWN)
@@ -495,7 +476,7 @@ void playGame()
                                     SDL_RenderPresent(renderer);
                                     //SDL_Delay(50);
                                     play_again = true;
-                                    system("cls");
+
                                     break;
                                 }
                                 else continue;
