@@ -152,11 +152,40 @@ void playGame()
                             board_clone[c_.x][c_.y] = box2.type;
                             board_clone[d_.x][d_.y] = box2.type;
 //XET CAC DIEU KIEN : 1/ Chieu cao tong hop(CCTH) = tong chieu cao cac cot
-                  //  2/ So dong full(SDF) = so dong da du 10 o gach
-                  //  3/ So luong ho(Holes) = so luong o trang ma tren no la o gach
-                  //  4/ Do gap genh(Bumpiness) = tong cua cac hieu giua chieu cao 2 cot lien ke(lay tri tuyet doi)
+                            //  2/ So dong full(SDF) = so dong da du 10 o gach
+                            //  3/ So luong ho(Holes) = so luong o trang ma tren no la o gach
+                            //  4/ Do gap genh(Bumpiness) = tong cua cac hieu giua chieu cao 2 cot lien ke(lay tri tuyet doi)
+                            int CCTH = 0;
+                            int high_cols[10];
+                            for(int i = left_margin +1; i <= right_margin-1; i++ )
+                            {
+                                int _height = (height-5) - High_Col(i);
+                                CCTH += _height;
+                                high_cols[i - left_margin - 1] = _height;
+                            }
+                            int Bumpiness = 0;
+                            for(int i = 0; i < 9; i ++)
+                            {
+                                Bumpiness = Bumpiness + abs(high_cols[i] - high_cols[i+1]);
+                            }
+                            int Holes=0;
 
-                            double tong_Diem = AI_SCORE();
+                            for(int i = left_margin+1 ; i <= right_margin-1; i++)
+                            {
+                                for(int j=5; j<height-1; j++)
+                                {
+                                    if(board_clone[j][i] ==0 && board_clone[j-1][i] != 0) Holes+=1;
+                                }
+                            }
+                            int SDF = 0;
+                            for(int i=4; i<height-1; i++)
+                            {
+                                if(IsFullRow(i) == true)
+                                {
+                                    SDF ++;
+                                }
+                            }
+                            double tong_Diem = hs1*CCTH + hs2*SDF + hs3*Holes + hs4*Bumpiness;
                             score_AI[y][x] = tong_Diem;
 
                         }
