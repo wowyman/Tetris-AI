@@ -5,9 +5,8 @@ int board_clone[height][width];
 double score_AI[4][10];
 int a2;//clone cua a
 double MAXXX = -9999.0;
-//0.510066, 0.760666, 0.35663, 0.184483
-//hs1 = -0.510066,hs2 = 0.760666, hs3 = -0.35663, hs4 = - 0.184483 , hs5 = -0.12;//max 74 diem
-const double hs1 = -0.51,hs2 = 0.761, hs3 = -0.3567, hs4 = - 0.185 , hs5 = -0.119;
+//0.510066, 0.760666, 0.35663, 0.184483, hs5 = -0.119
+const double hs1 = -0.5,hs2 = 0.76, hs3 = -0.3567, hs4 = - 0.185;
 void init_clone()
 {
     a2 = a;
@@ -119,32 +118,82 @@ bool IsFullRow(int row)
     }
     return true;
 }
-///------------------------------------------------
-//-------------------Cai tien them----------------
-int Max_high()
+int High_Col(int col)
 {
-
-    int col_high_max = -99;
-    int high_max = -100;
-// cot cao nhat
-    int Count1=0;
+    int count1 = 0;
+    for(int i=4; i<height - 1; i++)
+    {
+        if(board_clone[i][col] == 0 )
+        {
+            count1++;
+        }
+        else break;
+    }
+    return count1;
+}
+int AI_SCORE()
+{
+    int CCTH = 0;
+    int high_cols[10];
     for(int i = left_margin +1; i <= right_margin-1; i++ )
     {
-        Count1 = 0;
-        for(int j = 4; j < height-1 ; j++)
+        int _height = (height-5) - High_Col(i);
+        CCTH += _height;
+        high_cols[i - left_margin - 1] = _height;
+    }
+    int Bumpiness = 0;
+    for(int i = 0; i < 9; i ++)
+    {
+        Bumpiness = Bumpiness + abs(high_cols[i] - high_cols[i+1]);
+    }
+    int Holes=0;
+    for(int i=5; i<height-1; i++)
+    {
+        for(int j = left_margin+1 ; j <= right_margin-1; j++)
         {
-            if(board_clone[j][i] == 0 )
-            {
-                Count1++;
-            }
-            else break;
-        }
-        int _height = (height-5) - Count1;
-        if(_height > high_max )
-        {
-            high_max = _height;
-            col_high_max = i;
+            if(board_clone[i][j] ==0 && board_clone[i-1][j] != 0) Holes+=1;
         }
     }
-    return col_high_max;
+    int SDF = 0;
+    for(int i=4; i<height-1; i++)
+    {
+        if(IsFullRow(i) == true)
+        {
+            SDF ++;
+        }
+    }
+    double tong_Diem = hs1*CCTH + hs2*SDF + hs3*Holes + hs4*Bumpiness;
+    //cout<<CCTH<<" "<<SDF<<" "<<Holes<<" "<<Bumpiness<<" TONG DIEM : "<<tong_Diem<<endl;
+    return tong_Diem;
 }
+
+
+///------------------------------------------------
+//-------------------Cai tien them----------------
+//int Max_high()
+//{
+//
+//    int col_high_max = -99;
+//    int high_max = -100;
+//// cot cao nhat
+//    int Count1=0;
+//    for(int i = left_margin +1; i <= right_margin-1; i++ )
+//    {
+//        Count1 = 0;
+//        for(int j = 4; j < height-1 ; j++)
+//        {
+//            if(board_clone[j][i] == 0 )
+//            {
+//                Count1++;
+//            }
+//            else break;
+//        }
+//        int _height = (height-5) - Count1;
+//        if(_height > high_max )
+//        {
+//            high_max = _height;
+//            col_high_max = i;
+//        }
+//    }
+//    return col_high_max;
+//}

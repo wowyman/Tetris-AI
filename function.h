@@ -215,7 +215,7 @@ bool IsMove(brick &box,point &A,point &B,point &C,point &D,int direction)//direc
 //        else if(box.type == 6);
 //    }
 //}
-void rotary(brick& box,point& A,point& B,point& C,point& D)
+void rotate(brick& box,point& A,point& B,point& C,point& D)
 {
     int Xtemp=A.x;
     A.x=-A.y+box.center.x+box.center.y;
@@ -410,7 +410,7 @@ void Print_Background(SDL_Renderer *renderer)//ve nen ban choi
 
 bool inside(SDL_Renderer *renderer,brick &box,point A,point B,point C,point D)// kiem tra neu xoay thi khoi gach co ra ngoai ban choi khong
 {
-    rotary(box,A,B,C,D);
+    rotate(box,A,B,C,D);
     int le_trai1 = ((SCREEN_WIDTH-10*box.size)/2)/box.size;
     int le_phai1 = le_trai1+9;
     bool checkA = (A.y <= le_phai1 && A.y >= le_trai1 && board_game[A.x][A.y] == 0);

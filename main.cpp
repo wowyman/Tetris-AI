@@ -133,7 +133,7 @@ void playGame()
 
                         for(int rotation = 0; rotation <=y; rotation ++)
                         {
-                            rotary(box2,a_,b_,c_,d_);
+                            rotate(box2,a_,b_,c_,d_);
                         }
 
                         if(!inside_AI(box2,a_,b_,c_,d_))
@@ -151,61 +151,12 @@ void playGame()
                             board_clone[b_.x][b_.y] = box2.type;
                             board_clone[c_.x][c_.y] = box2.type;
                             board_clone[d_.x][d_.y] = box2.type;
-//XET 4 DIEU KIEN : chieu cao tong hop(CCTH), so dong full(SDF), so luong ho(Holes), so gieng(Gieng)
+//XET CAC DIEU KIEN : 1/ Chieu cao tong hop(CCTH) = tong chieu cao cac cot
+                  //  2/ So dong full(SDF) = so dong da du 10 o gach
+                  //  3/ So luong ho(Holes) = so luong o trang ma tren no la o gach
+                  //  4/ Do gap genh(Bumpiness) = tong cua cac hieu giua chieu cao 2 cot lien ke(lay tri tuyet doi)
 
-                            double CCTH = 0;
-                            int Count[10];
-                            for(int i=0; i<10; i++)
-                            {
-                                Count[i] = 0;
-                            }
-                            int gieng[9];
-                            for(int i = left_margin +1; i <= right_margin-1; i++ )
-                            {
-                                for(int j = 4; j < height-1 ; j++)
-                                {
-                                    if(board_clone[j][i] == 0 )
-                                    {
-                                        Count[i - left_margin - 1]++;
-                                    }
-                                    else break;
-//                                    if(board_clone[j][i] == 0)
-//                                    {
-//                                        Count[i - left_margin - 1]++;
-//                                    }
-                                }
-                                int _height = (height-5) - Count[i - left_margin - 1];
-                                CCTH += _height;
-                                gieng[i - left_margin - 1] = _height;
-                            }
-                            double Gieng = 0;
-                            for(int i = 0; i < 8; i ++)
-                            {
-                                Gieng = Gieng + abs(gieng[i] - gieng[i+1]);
-                            }
-                            int SDF = 0;
-                            for(int i=4; i<height-1; i++)
-                            {
-                                if(IsFullRow(i) == true)
-                                {
-                                    SDF ++;
-                                }
-                            }
-                            double Holes = 0;
-                            for(int i=5; i<height-1; i++)
-                            {
-
-                                for(int j = left_margin+1 ; j <= right_margin-1; j++)
-                                {
-                                    if(board_clone[i][j] ==0 && board_clone[i-1][j] != 0) Holes+=1;
-                                }
-                            }
-                            double tong_Diem = hs1*CCTH + hs2*SDF + hs3*Holes + hs4*Gieng;
-                            if(x+left_margin+1 == Max_high()&&box2.type != 3 &&box2.type != 4)
-                            {
-                                tong_Diem = tong_Diem + hs5*Gieng;
-                            }
-                            //cout<<CCTH<<" "<<SDF<<" "<<Holes<<" "<<Gieng<<" TONG DIEM : "<<tong_Diem<<endl;
+                            double tong_Diem = AI_SCORE();
                             score_AI[y][x] = tong_Diem;
 
                         }
@@ -229,13 +180,12 @@ void playGame()
                 }
                 //cout<<"Max: " << max_score_AI<<endl;
                 a=2;
-
                 b=y_;
                 box.Get_Center_Brick(a,b);
                 shape_of_you(box,A,B,C,D);
                 for(int rotation=0; rotation<=x_; rotation++)
                 {
-                    rotary(box,A,B,C,D);
+                    rotate(box,A,B,C,D);
                 }
 
             }
@@ -261,7 +211,7 @@ void playGame()
                 goDown(box,A,B,C,D,a,renderer);
                 Print_Fixed_Block(renderer,box);
 
-                time_delay = 150;
+                time_delay = 200;
 
                 Print_Background(renderer);
                 Print_Next_Block(box1,renderer,next_block);
@@ -320,7 +270,7 @@ void playGame()
                                 SDL_Delay(time_delay/7);
                                 if(IsMove(box,A,B,C,D,0) && inside(renderer,box,A,B,C,D))
                                 {
-                                    rotary(box,A,B,C,D);
+                                    rotate(box,A,B,C,D);
                                     if(dark)
                                         SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
                                     else
