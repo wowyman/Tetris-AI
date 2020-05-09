@@ -7,7 +7,7 @@ int a2;//clone cua a
 double MAXXX = -9999.0;
 //0.510066, 0.760666, 0.35663, 0.184483, //hs5 = -0.119
 //hs1 = -0.4999,hs2 = 0.7605, hs3 = -0.3567, hs4 = -0.22; ngon nhat
-const double hs1 = -0.4999,hs2 = 0.7605, hs3 = -0.3566, hs4 = -0.225;
+const double hs1 = -0.4999,hs2 = 0.7605, hs3 = -0.35662, hs4 = -0.222;
 void init_clone()
 {
     a2 = a;

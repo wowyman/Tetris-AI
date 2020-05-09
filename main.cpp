@@ -72,10 +72,11 @@ void playGame()
     SDL_Renderer* renderer;
     initSDL(window, renderer);
 
+    int next_block,cur_block;
     dark = false;
     count_dark = -1;
     int count_AI = 0;
-    bool run_AI = false;
+
     while(true)
     {
         play_again = false;
@@ -90,21 +91,22 @@ void playGame()
         b=width/2-1;
         box.Get_Center_Brick(a,b);
         score = 0;
-        srand(time(0));
-        int next_block = rand() % 7 + 1, cur_block;
+
+        next_block = rand() % 7 + 1;
 
         init();
         brick box1;
         SDL_Event e;
         while(!end)
         {
+
             quit = false;
-            //k=0;//dung de xoay truong hop 7,3,4
             cur_block = next_block;
             box.getType(cur_block);
             box.Get_Center_Brick(a,b);
             shape_of_you(box,A,B,C,D);
             delete_row(renderer,box);
+
 //====================================================================================================================
 //====================================================================================================================
 //====================================================================================================================
@@ -170,11 +172,11 @@ void playGame()
                             }
                             int Holes=0;
 
-                            for(int i = left_margin+1 ; i <= right_margin-1; i++)
+                            for(int i = 5; i < height-1; i++)
                             {
-                                for(int j=5; j<height-1; j++)
+                                for(int j=left_margin+1; j<=right_margin-1; j++)
                                 {
-                                    if(board_clone[j][i] ==0 && board_clone[j-1][i] != 0) Holes+=1;
+                                    if(board_clone[i][j] ==0 && board_clone[i-1][j] != 0) Holes+=1;
                                 }
                             }
                             int SDF = 0;
@@ -222,8 +224,6 @@ void playGame()
 //====================================================================================================================
 //====================================================================================================================
 // END AI
-
-            srand(time(0));
             next_block = rand() % 7 + 1; //lay hinh tiep theo
 
             while(!quit)
@@ -250,7 +250,7 @@ void playGame()
                 {
                     SDL_Delay(time_delay);
                 }
-                else SDL_Delay(0);
+                else SDL_Delay(1);
 
                 while( SDL_PollEvent( &e ) != 0 )
                 {
@@ -395,12 +395,12 @@ void playGame()
                         SDL_RenderClear(renderer);
 
                         Print_Fixed_Block(renderer,box);
-                        Print_Next_Block(box,renderer,next_block);
+
 
                         Print_Background(renderer);
                         printScore(renderer,score);
                         printEndgame(renderer,score);
-
+                        Print_Next_Block(box,renderer,next_block);
                         SDL_RenderPresent(renderer);
 
                         fstream f1;
@@ -504,7 +504,7 @@ void drawStart(SDL_Renderer *renderer1)
 }
 int main(int argc, char* argv[])
 {
-
+    srand(time(NULL));
     cout<<"click Play to start."<<endl;
     SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
     SDL_Window* window1;
