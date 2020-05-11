@@ -6,7 +6,7 @@ int score = 0;
 const int height = 29;
 const int width = 34;
 int count_dark = -1;
-
+bool run_AI = false;
 bool dark = false;
 const int SCREEN_WIDTH = width*20;
 const int SCREEN_HEIGHT = height*20;
@@ -150,71 +150,7 @@ bool IsMove(brick &box,point &A,point &B,point &C,point &D,int direction)//direc
     check = (check1 && check2 && check3 && check4);
     return check;
 }
-//void rotary(brick& box,int k,point& A,point& B,point& C,point& D)
-//{
-//    if(k == 0);
-//    else
-//    {
-//        if(box.type == 1 || box.type == 2 || box.type == 5 )
-//        {
-//            int Xtemp=A.x;
-//            A.x=-A.y+box.center.x+box.center.y;
-//            A.y=Xtemp-box.center.x+box.center.y;
-//
-//            Xtemp=B.x;
-//            B.x=-B.y+box.center.x+box.center.y;
-//            B.y=Xtemp-box.center.x+box.center.y;
-//
-//            Xtemp=C.x;
-//            C.x=-C.y+box.center.x+box.center.y;
-//            C.y=Xtemp-box.center.x+box.center.y;
-//
-//            Xtemp=D.x;
-//            D.x=-D.y+box.center.x+box.center.y;
-//            D.y=Xtemp-box.center.x+box.center.y;
-//        }
-//        else if(box.type == 3 || box.type == 4 || box.type == 7)
-//        {
-//            if(k % 2 == 1)
-//            {
-//                int Xtemp=A.x;
-//                A.x=-A.y+box.center.x+box.center.y;
-//                A.y=Xtemp-box.center.x+box.center.y;
-//
-//                Xtemp=B.x;
-//                B.x=-B.y+box.center.x+box.center.y;
-//                B.y=Xtemp-box.center.x+box.center.y;
-//
-//                Xtemp=C.x;
-//                C.x=-C.y+box.center.x+box.center.y;
-//                C.y=Xtemp-box.center.x+box.center.y;
-//
-//                Xtemp=D.x;
-//                D.x=-D.y+box.center.x+box.center.y;
-//                D.y=Xtemp-box.center.x+box.center.y;
-//            }
-//            else if(k % 2 == 0 && k >=2 )
-//            {
-//                int Xtemp=A.x;
-//                A.x=A.y+box.center.x-box.center.y;
-//                A.y=-Xtemp+box.center.x+box.center.y;
-//
-//                Xtemp=B.x;
-//                B.x=B.y+box.center.x-box.center.y;
-//                B.y=-Xtemp+box.center.x+box.center.y;
-//
-//                Xtemp=C.x;
-//                C.x=C.y+box.center.x-box.center.y;
-//                C.y=-Xtemp+box.center.x+box.center.y;
-//
-//                Xtemp=D.x;
-//                D.x=D.y+box.center.x-box.center.y;
-//                D.y=-Xtemp+box.center.x+box.center.y;
-//            }
-//        }
-//        else if(box.type == 6);
-//    }
-//}
+
 void rotate(brick& box,point& A,point& B,point& C,point& D)
 {
     int Xtemp=A.x;
@@ -346,7 +282,7 @@ void goDown(brick &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *
     if(IsMove(box,A,B,C,D,0))
     {
         a+=1;
-        box.center.x += 1;
+        box.center.x -= 1;
         A.x += 1;
         B.x += 1;
         C.x += 1;
@@ -418,7 +354,6 @@ bool inside(SDL_Renderer *renderer,brick &box,point A,point B,point C,point D)//
     bool checkC = (C.y <= le_phai1 && C.y >= le_trai1 && board_game[C.x][C.y] == 0);
     bool checkD = (D.y <= le_phai1 && D.y >= le_trai1 && board_game[D.x][D.y] == 0);
     bool check = (checkA && checkB && checkC && checkD);
-    //cout<<checkA<<","<<checkB<<","<<checkC<<","<<checkD<<endl;
     return check;
 }
 void Fixed_Block(point A,point B,point C,point D,brick &box)//co dinh gach khi no dung lai
@@ -474,7 +409,7 @@ void Print_Fixed_Block(SDL_Renderer *renderer,brick &box)//ve gach da co dinh
 
 void delete_row(SDL_Renderer *renderer,brick &box)//tinh diem va ve lai ban choi khi nhung dong da full bien mat
 {
-    //int old_score = score;
+    int old_score = score;
     int count[height-1];
     for(int i=0; i<height-1; i++)
     {
@@ -506,8 +441,9 @@ void delete_row(SDL_Renderer *renderer,brick &box)//tinh diem va ve lai ban choi
         }
         else i--;
     }
-    //cout<<score<<endl;
-    //if(score != old_score) SDL_Delay(120);
+    if(run_AI == false){
+        if(score != old_score) SDL_Delay(180);
+    }
     Print_Fixed_Block(renderer,box);
 }
 
@@ -556,22 +492,21 @@ void printScore(SDL_Renderer *renderer,int number)
     SDL_Rect rect;
     rect.x = (right_margin+1)*20;
     rect.y = 11*20;
-    rect.w = 5*20;
+    rect.w = 7*20;
     rect.h = 2*20;
     SDL_SetRenderDrawColor(renderer,255,255,255,0);
     SDL_RenderFillRect(renderer,&rect);
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 80);
     SDL_Color color = { 3, 87, 231 };
-    SDL_Surface * surface = TTF_RenderText_Solid(font,
-                            "SCORE: ", color);
+    SDL_Surface * surface = TTF_RenderText_Solid(font,"SCORE: ", color);
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
     int texW = 0;
     int texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
     SDL_Rect dstrect = { (right_margin+2)*20-10, 12*20-10, 60, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-
+    SDL_DestroyTexture(texture);
     color = { 255, 0, 255 };
     string s = to_string(number);
     const char *diem = s.c_str();
@@ -607,7 +542,7 @@ void printScore(SDL_Renderer *renderer,int number)
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
     dstrect = { (right_margin+2)*20+5, 15*20-10, 50, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-
+    SDL_DestroyTexture(texture);
     rect.x = (right_margin+1)*20;
     rect.y = 17*20;
     rect.w = 5*20;
@@ -621,9 +556,9 @@ void printScore(SDL_Renderer *renderer,int number)
     texW = 0;
     texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = { (right_margin+2)*20+5, 18*20-10, 50, 20 };
+    dstrect = { (right_margin+2)*20+3, 18*20-10, 55, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-
+    SDL_DestroyTexture(texture);
     rect.x = (right_margin+1)*20;
     rect.y = 20*20;
     rect.w = 5*20;
@@ -637,32 +572,23 @@ void printScore(SDL_Renderer *renderer,int number)
     texW = 0;
     texH = 0;
     SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
-    dstrect = { (right_margin+2)*20+5, 21*20-10, 50, 20 };
+    dstrect = { (right_margin+2)*20+3, 21*20-10, 60, 20 };
     SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-
+    SDL_DestroyTexture(texture);
 }
 void printEndgame(SDL_Renderer *renderer,int number)// hien thi cua so khi thua
 {
     SDL_Rect rect = { left_margin*20, 11*20, 12*20, 6*20};
     SDL_SetRenderDrawColor(renderer,0,0,0,0);
     SDL_RenderFillRect(renderer,&rect);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,left_margin*20+2,11*20+2,(right_margin+1)*20-2,11*20+2);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(right_margin+1)*20-2,11*20+2,(right_margin+1)*20-2,17*20-2);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,left_margin*20+2,17*20-2,(right_margin+1)*20-2,17*20-2);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,left_margin*20+2,11*20+2,left_margin*20+2,17*20-2);
 
+    rect = { left_margin*20+1, 11*20+1, 12*20-2, 6*20-2};
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(left_margin+1)*20-10,12*20-10,(left_margin+11)*20+10,12*20-10);
+    SDL_RenderDrawRect(renderer,&rect);
+
+    rect = { (left_margin+1)*20-10, 12*20-10, 12*20-20, 6*20-20};
     SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(left_margin+11)*20+10,12*20-10,(left_margin+11)*20+10,16*20+10);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(left_margin+1)*20-10,16*20+10,(left_margin+11)*20+10,16*20+10);
-    SDL_SetRenderDrawColor(renderer, 255, 160, 0, 255);
-    SDL_RenderDrawLine(renderer,(left_margin+1)*20-10,12*20-10,(left_margin+1)*20-10,16*20+10);
+    SDL_RenderDrawRect(renderer,&rect);
 
     TTF_Init();
     TTF_Font * font = TTF_OpenFont("vgafix.fon", 80);

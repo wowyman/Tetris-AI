@@ -72,7 +72,7 @@ void playGame()
     SDL_Renderer* renderer;
     initSDL(window, renderer);
 
-    int next_block,cur_block;
+    int next_block,cur_block,start=2;
     dark = false;
     count_dark = -1;
     int count_AI = 0;
@@ -87,8 +87,8 @@ void playGame()
         point A,B,C,D;
 
 
-        a=2;
-        b=width/2-1;
+        a = start;
+        b = width/2 - 1;
         box.Get_Center_Brick(a,b);
         score = 0;
 
@@ -153,7 +153,7 @@ void playGame()
                             board_clone[b_.x][b_.y] = box2.type;
                             board_clone[c_.x][c_.y] = box2.type;
                             board_clone[d_.x][d_.y] = box2.type;
-//XET CAC DIEU KIEN : 1/ Chieu cao tong hop(CCTH) = tong chieu cao cac cot
+//XET CAC DIEU KIEN :           1/ Chieu cao tong hop(CCTH) = tong chieu cao cac cot
                             //  2/ So dong full(SDF) = so dong da du 10 o gach
                             //  3/ So luong ho(Holes) = so luong o trang ma tren no la o gach
                             //  4/ Do gap genh(Bumpiness) = tong cua cac hieu giua chieu cao 2 cot lien ke(lay tri tuyet doi)
@@ -193,7 +193,7 @@ void playGame()
                         }
                     }
                 }
-                int x_=1,y_=width/2-3;
+                int x_= 1,y_= width/2 - 3;
                 double max_score_AI = MAXXX + 1.0;
                 for(int i = 0; i < 4; i++)
                 {
@@ -206,12 +206,10 @@ void playGame()
                             x_ = i;
                             y_ = j + left_margin + 1;
                         }
-                        //cout<<diem_AI[i][j] << endl;
                     }
                 }
-                //cout<<"Max: " << max_score_AI<<endl;
-                a=2;
-                b=y_;
+                a = start;
+                b = y_;
                 box.Get_Center_Brick(a,b);
                 shape_of_you(box,A,B,C,D);
                 for(int rotation=0; rotation<=x_; rotation++)
@@ -429,7 +427,6 @@ void playGame()
                         end = true;
                         while (!play_again)
                         {
-                            //SDL_Delay(10);
                             if ( SDL_PollEvent(&e1) == 0)
                                 continue;
                             if (e1.type == SDL_QUIT)
@@ -453,7 +450,6 @@ void playGame()
                                     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
                                     SDL_RenderDrawRect(renderer,&rect);
                                     SDL_RenderPresent(renderer);
-                                    //SDL_Delay(50);
                                     play_again = true;
 
                                     break;
@@ -465,7 +461,7 @@ void playGame()
                     }
                     else
                     {
-                        a=2;
+                        a=start;
                         b=width/2-1;
                         break;
                     }
@@ -610,7 +606,6 @@ int main(int argc, char* argv[])
     }
     if(play == true)
     {
-        //SDL_Delay(50);
         quitSDL(window1, renderer1);
         playGame();
     }

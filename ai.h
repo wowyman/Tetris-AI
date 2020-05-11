@@ -3,11 +3,10 @@
 using namespace std;
 int board_clone[height][width];
 double score_AI[4][10];
-int a2;//clone cua a
+int a2;
 double MAXXX = -9999.0;
-//0.510066, 0.760666, 0.35663, 0.184483, //hs5 = -0.119
-//hs1 = -0.4999,hs2 = 0.7605, hs3 = -0.3567, hs4 = -0.22; ngon nhat
-const double hs1 = -0.4999,hs2 = 0.7605, hs3 = -0.35662, hs4 = -0.222;
+//hs1 = -0.4999,hs2 = 0.7605, hs3 = -0.35662, hs4 = -0.185; ngon nhat
+const double hs1 = -0.5,hs2 = 0.76, hs3 = -0.355, hs4 = -0.19;
 void init_clone()
 {
     a2 = a;
@@ -18,8 +17,6 @@ void init_clone()
             board_clone[i][j] = board_game[i][j];
         }
     }
-
-    //cout<<max_high<<endl;
 }
 
 bool inside_AI(brick box,point A,point B,point C,point D)
