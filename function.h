@@ -282,7 +282,7 @@ void goDown(brick &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *
     if(IsMove(box,A,B,C,D,0))
     {
         a+=1;
-        box.center.x -= 1;
+        box.center.x += 1;
         A.x += 1;
         B.x += 1;
         C.x += 1;
