@@ -2,7 +2,6 @@
 using namespace std;
 
 int score = 0;
-//int k=0;
 const int height = 29;
 const int width = 34;
 int count_dark = -1;
@@ -16,8 +15,6 @@ int board_game[height][width];
 
 int a,b;//toa do tam
 brick box;
-
-
 
 void init()//khoi tao mang luu ban choi
 {
@@ -150,7 +147,6 @@ bool IsMove(brick &box,point &A,point &B,point &C,point &D,int direction)//direc
     check = (check1 && check2 && check3 && check4);
     return check;
 }
-
 void rotate(brick& box,point& A,point& B,point& C,point& D)
 {
     int Xtemp=A.x;
@@ -277,12 +273,12 @@ void turnRight(brick &box,point &A,point &B,point &C,point &D,int &b)
     }
     else;
 }
-void goDown(brick &box,point &A,point &B,point &C,point &D,int &a,SDL_Renderer *renderer)//di xuong
+void goDown(brick &box,point &A,point &B,point &C,point &D,int &a)//di xuong
 {
     if(IsMove(box,A,B,C,D,0))
     {
         a+=1;
-        box.center.x += 1;
+        box.center.x+= 1;
         A.x += 1;
         B.x += 1;
         C.x += 1;

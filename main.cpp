@@ -76,17 +76,13 @@ void playGame()
     dark = false;
     count_dark = -1;
     int count_AI = 0;
-
-    while(true)
+    while(true)//vong lap de choi lai
     {
         play_again = false;
         bool quit = false,end = false;
 
-
-        int time_delay;
+        int time_delay = 200;
         point A,B,C,D;
-
-
         a = start;
         b = width/2 - 1;
         box.Get_Center_Brick(a,b);
@@ -97,7 +93,8 @@ void playGame()
         init();
         brick box1;
         SDL_Event e;
-        while(!end)
+        bool check1[20]= {}; //luu xem diem thuoc doan nao
+        while(!end)//vong lap de lap lai su di chuyen cua cac khoi gach
         {
 
             quit = false;
@@ -107,12 +104,20 @@ void playGame()
             shape_of_you(box,A,B,C,D);
             delete_row(renderer,box);
 
-//====================================================================================================================
-//====================================================================================================================
-//====================================================================================================================
-//====================================================================================================================
-//AI:     cach lam tham khao tai trang https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/
+            for(int i=1; i<=20; i++) //dung de tang toc do,giam delay
+            {
+                if(!check1[i] && score>=(i*10) && time_delay >=0)
+                {
+                    check1[i] = true;
+                    time_delay -= 10;
+                }
+            }
 
+//====================================================================================================================
+//====================================================================================================================
+//====================================================================================================================
+//====================================================================================================================
+//  AI
             if(run_AI == true)
             {
                 for(int i=0; i<4; i++)
@@ -147,15 +152,16 @@ void playGame()
                         {
                             while(IsMove_AI(box2,a_,b_,c_,d_))
                             {
-                                goDown(box2,a_,b_,c_,d_,a2,renderer);
+                                goDown(box2,a_,b_,c_,d_,a2);
                             }
                             board_clone[a_.x][a_.y] = box2.type;
                             board_clone[b_.x][b_.y] = box2.type;
                             board_clone[c_.x][c_.y] = box2.type;
                             board_clone[d_.x][d_.y] = box2.type;
-//XET CAC DIEU KIEN :           1/ Chieu cao tong hop(CCTH) = tong chieu cao cac cot
+//cac dieu kien tham khao tai trang https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/
+        //XET CAC DIEU KIEN :   1/ Chieu cao tong hop(CCTH) = tong chieu cao cac cot
                             //  2/ So dong full(SDF) = so dong da du 10 o gach
-                            //  3/ So luong ho(Holes) = so luong o trang ma tren no la o gach
+                            //  3/ So luong ho(Holes) = so luong o trong ma tren no la o gach
                             //  4/ Do gap genh(Bumpiness) = tong cua cac hieu giua chieu cao 2 cot lien ke(lay tri tuyet doi)
                             int CCTH = 0;
                             int high_cols[10];
@@ -189,7 +195,6 @@ void playGame()
                             }
                             double tong_Diem = hs1*CCTH + hs2*SDF + hs3*Holes + hs4*Bumpiness;
                             score_AI[y][x] = tong_Diem;
-
                         }
                     }
                 }
@@ -221,10 +226,11 @@ void playGame()
 //====================================================================================================================
 //====================================================================================================================
 //====================================================================================================================
+//====================================================================================================================
 // END AI
             next_block = rand() % 7 + 1; //lay hinh tiep theo
 
-            while(!quit)
+            while(!quit)//vong lap de di chuyen khoi gach
             {
                 if(dark)
                     SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
@@ -235,20 +241,19 @@ void playGame()
 
                 box.render(renderer,A,B,C,D,box.type);
 
-                goDown(box,A,B,C,D,a,renderer);
+                goDown(box,A,B,C,D,a);
                 Print_Fixed_Block(renderer,box);
-
-                time_delay = 200;
-
                 Print_Background(renderer);
                 Print_Next_Block(box1,renderer,next_block);
                 printScore(renderer,score);
                 SDL_RenderPresent(renderer);
+
+
                 if(!run_AI)
                 {
                     SDL_Delay(time_delay);
                 }
-                else SDL_Delay(1);
+                else SDL_Delay(0);
 
                 while( SDL_PollEvent( &e ) != 0 )
                 {
@@ -264,8 +269,8 @@ void playGame()
                             switch (e.key.keysym.sym)
                             {
                             case SDLK_ESCAPE:
-                                end = true;
                                 quit = true;
+                                end = true;
                                 break;
                             case SDLK_a:
                                 SDL_Delay(time_delay/7);
@@ -278,7 +283,7 @@ void playGame()
                             case SDLK_s:
                                 while(IsMove(box,A,B,C,D,0))
                                 {
-                                    goDown(box,A,B,C,D,a,renderer);
+                                    goDown(box,A,B,C,D,a);
                                 }
                                 if(dark)
                                     SDL_SetRenderDrawColor(renderer, 0, 28, 101, 0);
@@ -324,7 +329,7 @@ void playGame()
 
                         bool checkk = (e.button.x >= (right_margin+1)*20 && e.button.x <= (right_margin+1)*20+5*20 &&
                                        e.button.y >= 17*20 && e.button.y <= 17*20+20*2);
-                        if(checkk)
+                        if(checkk)//reset
                         {
                             SDL_Rect rect;
                             rect.x = (right_margin+1)*20;

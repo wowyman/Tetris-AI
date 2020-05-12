@@ -4,9 +4,11 @@ using namespace std;
 int board_clone[height][width];
 double score_AI[4][10];
 int a2;
+
 double MAXXX = -9999.0;
 //hs1 = -0.4999,hs2 = 0.7605, hs3 = -0.35662, hs4 = -0.185; ngon nhat
-const double hs1 = -0.5,hs2 = 0.76, hs3 = -0.355, hs4 = -0.19;
+const double hs1 = -0.5,hs2 = 0.76, hs3 = -0.355, hs4 = -0.2;
+
 void init_clone()
 {
     a2 = a;
@@ -129,4 +131,3 @@ int High_Col(int col)
     }
     return count1;
 }
-
