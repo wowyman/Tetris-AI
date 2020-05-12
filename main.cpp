@@ -264,6 +264,8 @@ void playGame()
                             switch (e.key.keysym.sym)
                             {
                             case SDLK_ESCAPE:
+                                end = true;
+                                quit = true;
                                 break;
                             case SDLK_a:
                                 SDL_Delay(time_delay/7);
