@@ -103,13 +103,15 @@ void playGame()
             box.Get_Center_Brick(a,b);
             shape_of_you(box,A,B,C,D);
             delete_row(renderer,box);
-
-            for(int i=1; i<=20; i++) //dung de tang toc do,giam delay
-            {
-                if(!check1[i] && score>=(i*10) && time_delay >=0)
+            if(!run_AI)
+            {   
+                for(int i=1; i<=20; i++) //dung de tang toc do,giam delay
                 {
-                    check1[i] = true;
-                    time_delay -= 10;
+                    if(!check1[i] && score>=(i*10) && time_delay >=0)
+                    {
+                        check1[i] = true;
+                        time_delay -= 10;
+                    }
                 }
             }
 
