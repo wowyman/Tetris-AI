@@ -9,3 +9,4 @@ Game dùng mảng 2 chiều để lưu bàn chơi và ánh xạ từ hệ tọa 
 High score được lưu vào file high_score.txt mỗi lần chơi được điểm cao hơn sẽ thay giá trị trong file.
 
 Có chức năng AI để tự chơi,ấn RUN AI để chạy 
+![image](https://user-images.githubusercontent.com/62579415/119650786-69ff5600-be4e-11eb-8704-fa30864d34e2.png)
